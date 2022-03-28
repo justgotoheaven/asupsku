@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_name }} - СУП</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-collapse">
+        <div class="container">
+            <div class="navbar-header"><a class="navbar-brand" href="#">Учет показаний</a><button class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button></div>
+            <div
+                class="collapse navbar-collapse" id="navcol-1">
+                <ul class="nav navbar-nav">
+                    <li class="active" role="presentation"><a href="#">Счетчики</a></li>
+                    <li role="presentation"><a href="#">Отчеты и статистика</a></li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false" href="#">Сервисы<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="presentation"><a href="#">First Item</a></li>
+                            <li role="presentation"><a href="#">Second Item</a></li>
+                            <li role="presentation"><a href="#">Third Item</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true" href="#">{{ username }}<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li role="presentation"><a href="#">Настройки</a></li>
+                            <li role="presentation"><a href="/account/logout">Выйти из системы</a></li>
+                        </ul>
+                    </li>
+                </ul>
+        </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="alert alert-success" role="alert"><span><strong>СЧЕТЧИКИ</strong></span></div>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="info">#</th>
+                                <th class="info">Счетчик</th>
+                                <th class="info">Показания</th>
+                                <th class="info">Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for i in cdata %}
+                            <tr>
+                                <td>{{i[0]}}</td>
+                                <td><a href="#info" id="counter" index="{{i[0]}}">{{i[1]}}</a></td>
+                                <td>{{i[2]}}</td>
+                                <td><button class="btn btn-success btn-block btn-sm btn-inform" type="button" index="{{i[0]}}"><strong>+</strong></button></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="alert alert-success" role="alert"><span><strong>Информация о счетчике</strong></span></div><strong id="info">Выберите прибор учета</strong>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th style="padding-right:0;">Параметр</th>
+                                <th id="info">Информация</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding-right:0;">Заводской номер</td>
+                                <td style="padding-right:0;" id="zn"></td>
+                            </tr>
+                            <tr>
+                                <td>Дата установки</td>
+                                <td id="ust_date"></td>
+                            </tr>
+                            <tr>
+                                <td>Дата поверки</td>
+                                <td id="pov_date"></td>
+                            </tr>
+                            <tr>
+                                <td>Дата след. поверки</td>
+                                <td id="nextpov_date"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" role="dialog" tabindex="-1" id="pkzmodal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" onclick="window.location.reload()" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Прибор учета <strong id="modal_cname">ХВС</strong></h4>
+                </div>
+                <div class="modal-body">
+                    <h4>Записанные показания</h4>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Показания</th>
+                                    <th>Отчетный период</th>
+                                    <th>Дата записи</th>
+                                    <th>Кем записано</th>
+                                </tr>
+                            </thead>
+                            <tbody id="month_pkz">
+                            </tbody>
+                        </table>
+                    </div>
+                    <h4>Записать новые показания</h4>
+                    <div class="form-inline"><label for="newpkz">Новые показания</label><input class="form-control" id="newpkz" type="text" name="newpkz" placeholder="" style="margin-right:5px;margin-left:5px;">
+                        <select id="pkz_month" class="form-control" style="margin-right:5px;">
+                            {% for month in month_data %}
+                            <option value="{{ month.num }}"{%if month.now %} selected {% endif %}>{{ month.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button id="modal_setpkz" class="btn btn-primary" type="button">Записать</button></div>
+                </div>
+                <div class="modal-footer"><button class="btn btn-success" id="modal_close" type="button">Закрыть</button></div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>

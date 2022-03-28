@@ -1,0 +1,13 @@
+flask~=2.0.3
+flask-login
+flask-security
+flask-wtf
+wtforms~=3.0.1
+flask-script
+flask-sqlalchemy
+flask-migrated
+Werkzeug~=2.0.3
+alembic~=1.7.7
+SQLAlchemy~=1.4.32
+pymysql
+transliterate

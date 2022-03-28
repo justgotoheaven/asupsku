@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_name }} - СУП</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+</head>
+
+<body>
+    {% with username=username %}
+        {% include "admin_nav.html" %}
+    {% endwith %}
+    <div class="container">
+        <h3>Управление инспекторами</h3>
+        <form class="form-inline"><label>Поиск инспектора:&nbsp;</label><input class="form-control" type="text" placeholder="Введите имя" style="width:250px;"><button class="btn btn-success" type="submit" style="margin:5px;">Найти</button>
+            <div class="btn-group" role="group" style="margin-left:20px;"><a href="/admin/staff/add_inspector"><button class="btn btn-primary" type="button">Добавить инспектора</button></a></div>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+
+</html>
