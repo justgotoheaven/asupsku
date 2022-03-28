@@ -75,7 +75,7 @@ def admin_add_inspector():
         try:
             db.session.add(new_user)
             db.session.commit()
-            flash('Инспектор {} создан успешно\n\nЛогин: {}\nПароль: {}'.format(add_form.insp_name.data,
+            flash('Инспектор {0} создан успешно\n\nЛогин: {1}\nПароль: {2}'.format(add_form.insp_name.data,
                                                                                 insp_username,
                                                                                 user_password))
             return render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
