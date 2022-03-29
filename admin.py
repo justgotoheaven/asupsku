@@ -3,7 +3,7 @@ from app import app, db # Точка входа в приложение Flask
 from flask import render_template, Response, flash, request
 from flask_login import login_required, current_user
 from models import User # Модели и база данных
-from forms import AddInspectorForm, FindInspectorForm
+from forms import AddInspectorForm, FindInspectorForm, ChangeInspectorEmailAndPassword, DeleteInspector
 from transliterate import translit
 from random import randint
 from utils import generate_password
@@ -47,13 +47,68 @@ def admin_staff_page():
                            page_name='Инспекторы',
                            username = current_user.min_name())
 
+@app.route('/admin/staff/delete_inspector/<int:id>', methods=['POST', 'GET'])
+@login_required
+def admin_delete_inspector(id):
+    if not current_user.is_admin():
+        return Response(status=403)
+    delete_form = DeleteInspector()
+    if request.method == 'POST' and delete_form.is_submitted():
+        pass
+    return render_template('jasny/admin/delete_inspector.html',
+                           page_name='Удаление инспектора',
+                           username=current_user.min_name(),
+                           form=delete_form)
+
 
 @app.route('/admin/staff/inspector/<int:id>', methods=['POST', 'GET'])
 @login_required
 def admin_info_inspector(id):
     if not current_user.is_admin():
         return Response(status=403)
-    return Response(status=501)
+    change_form = ChangeInspectorEmailAndPassword()
+    if request.method == 'POST' and change_form.is_submitted():
+        updating_data = dict()
+        if change_form.email.data:
+            updating_data['email'] = change_form.email.data
+        if change_form.password.data:
+            from werkzeug.security import generate_password_hash
+            updating_data['password_hash'] = generate_password_hash(change_form.password.data)
+        if updating_data:
+            User.query.filter_by(id=id).update(updating_data)
+            db.session.commit()
+            flash('Данные пользователя изменены!')
+
+    this_user = db.session.query(User.inspector).filter(User.id == id).first()
+    if not this_user.inspector:
+        return render_template('jasny/admin/show_insp_information.html',
+                               page_name='Информация инспектора',
+                               username=current_user.min_name(),
+                               not_insp=True,
+                               form=change_form)
+    insp_user = db.session.query(User.login,
+                           User.name,
+                           User.email,
+                           User.created_on,
+                           User.created_by,
+                           User.inspector).filter(User.id == id).first()
+    who_registered = ''
+    try:
+        who_registered = db.session.query(User.name).filter(User.id == insp_user.created_by).first().name
+    except:
+        who_registered = 'Неизвестно'
+    data = dict(id=id,
+                name=insp_user.name,
+                login=insp_user.login,
+                email=insp_user.email,
+                regdate=insp_user.created_on,
+                regby=who_registered)
+    return render_template('jasny/admin/show_insp_information.html',
+                           insp = data,
+                           show_data = True,
+                           page_name='Информация инспектора',
+                           username=current_user.min_name(),
+                           form=change_form)
 
 @app.route('/admin/staff/add_inspector', methods=['POST', 'GET'])
 @login_required
@@ -69,7 +124,8 @@ def admin_add_inspector():
         new_user = User(name = add_form.insp_name.data,
                         login = insp_username,
                         email = add_form.insp_email.data,
-                        inspector = True)
+                        inspector = True,
+                        created_by=current_user.id)
         user_password = generate_password(8)
         new_user.set_password(user_password)
         try:
@@ -84,10 +140,9 @@ def admin_add_inspector():
         except Exception as e:
             db.session.rollback()
             flash('Ошибка создания пользователя<br>Техническая информация:<br>{}'.format(e))
-            render_template('jasny/add_inspector.html', page_name='Новый инспектор',
+            render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
                             username=current_user.min_name(),
                             form=add_form)
     return render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
                            username=current_user.min_name(),
                            form=add_form)
-
