@@ -7,6 +7,7 @@ from forms import AddInspectorForm, FindInspectorForm, ChangeInspectorEmailAndPa
 from transliterate import translit
 from random import randint
 from utils import generate_password
+import string
 
 @app.route('/admin/')
 @login_required
@@ -52,13 +53,28 @@ def admin_staff_page():
 def admin_delete_inspector(id):
     if not current_user.is_admin():
         return Response(status=403)
+    check_user_exists = User.query.filter_by(id = id).first()
+    if not check_user_exists:
+        return render_template('jasny/admin/delete_inspector.html',
+                               page_name='Удаление инспектора',
+                               username=current_user.min_name(),
+                               not_found = True)
+    user_data = db.session.query(User.name).filter_by(id=id).first()
     delete_form = DeleteInspector()
     if request.method == 'POST' and delete_form.is_submitted():
-        pass
+        to_delete_user = User.query.filter_by(id = id).first()
+        db.session.delete(to_delete_user)
+        db.session.commit()
+        return render_template('jasny/admin/delete_ok.html',
+                               username=current_user.min_name(),
+                               page_name='Удаление инспектора',
+                               insp_name = user_data.name)
     return render_template('jasny/admin/delete_inspector.html',
                            page_name='Удаление инспектора',
                            username=current_user.min_name(),
-                           form=delete_form)
+                           form=delete_form,
+                           insp_id = id,
+                           insp_name = user_data.name)
 
 
 @app.route('/admin/staff/inspector/<int:id>', methods=['POST', 'GET'])
@@ -117,6 +133,13 @@ def admin_add_inspector():
         return Response(status=403)
     add_form = AddInspectorForm()
     if add_form.validate_on_submit():
+        check_words = sum([i.strip(string.punctuation).isalpha() for i in add_form.insp_name.data.split()])
+        if check_words < 3:
+            flash('ФИО инспектора должно содержать минимум 3 слова')
+            return render_template('jasny/admin/add_inspector.html',
+                                   page_name='Новый инспектор',
+                                   username=current_user.min_name(),
+                                   form=add_form)
         username_string = '{}_{}'.format(add_form.insp_name.data.split(' ')[0], randint(100,999))
         insp_username = translit(username_string,
                                  language_code='ru',
