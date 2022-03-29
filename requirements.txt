@@ -11,3 +11,4 @@ alembic~=1.7.7
 SQLAlchemy~=1.4.32
 pymysql
 transliterate
+email_validator
