@@ -48,6 +48,22 @@ def admin_staff_page():
                            page_name='Инспекторы',
                            username = current_user.min_name())
 
+@app.route('/admin/staff/inspectors/all')
+@login_required
+def admin_all_staff_page():
+    if not current_user.is_admin():
+        return Response(status=403)
+    inspectors = User.query.filter_by(inspector=True).all()
+    if not inspectors:
+        return render_template('jasny/admin/all_inspectors.html',
+                    page_name = 'Список инспекторов',
+                    username = current_user.min_name(),
+                    no_inspectors = True)
+    return render_template('jasny/admin/all_inspectors.html',
+                    page_name = 'Список инспекторов',
+                    username = current_user.min_name(),
+                    inspectors = inspectors)
+
 @app.route('/admin/staff/delete_inspector/<int:id>', methods=['POST', 'GET'])
 @login_required
 def admin_delete_inspector(id):
