@@ -16,6 +16,7 @@ class User(db.Model, UserMixin):
     tgid = db.Column(db.Integer())
     isadmin = db.Column(db.Boolean(), default=False)
     inspector = db.Column(db.Boolean(), default=False)
+    created_by = db.Column(db.Integer(), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -76,12 +77,12 @@ class Counter(db.Model):
 class Pokaz(db.Model):
     __tablename__ = 'pokaz'
     id = db.Column(db.Integer(), primary_key=True)
-    counter = db.Column(db.Integer(), db.ForeignKey('counter.id'), nullable=False)
+    counter = db.Column(db.Integer(), nullable=False)
     pokaz = db.Column(db.Float())
     date = db.Column(db.Date())
     month = db.Column(db.Integer())
     year = db.Column(db.Integer())
-    person = db.Column(db.Integer(), db.ForeignKey('users.id'))
+    person = db.Column(db.Integer())
     type = db.Column(db.Integer())
 
     def __repr__(self):
