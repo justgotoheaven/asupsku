@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, BooleanField
+from wtforms import StringField, PasswordField, EmailField, SubmitField
 from wtforms.validators import DataRequired, Length
 
 # Форма авторизации пользователя (/account/login)
@@ -21,3 +21,10 @@ class AddUserForm(FlaskForm):
 
 class FindInspectorForm(FlaskForm):
     name = StringField(validators=[DataRequired(),Length(min=3)],id="name",render_kw={'placeholder':'Введите имя...'})
+
+class ChangeInspectorEmailAndPassword(FlaskForm):
+    email = EmailField(id="new_email",render_kw={'placeholder': 'Введите новый E-mail...'})
+    password = StringField(validators=[Length(min=8)],render_kw={'placeholder': 'Введите новый пароль...'})
+
+class DeleteInspector(FlaskForm):
+    submit = SubmitField(label='Да, удалить инспектора')
