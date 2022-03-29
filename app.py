@@ -1,7 +1,5 @@
 from flask import Flask
-from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-
 database_config = dict(host='192.168.16.2',
                        user='root',
                        password='t513t5130',
@@ -13,7 +11,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(dat
                                                                               database_config['password'],
                                                                               database_config['host'],
                                                                               database_config['database'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Database migration
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
