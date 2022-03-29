@@ -53,7 +53,7 @@ def admin_staff_page():
 def admin_all_staff_page():
     if not current_user.is_admin():
         return Response(status=403)
-    inspectors = User.query.filter_by(inspector=True).all()
+    inspectors = db.session.query(User.id, User.name).filter_by(inspector=True).all()
     if not inspectors:
         return render_template('jasny/admin/all_inspectors.html',
                     page_name = 'Список инспекторов',
@@ -112,7 +112,7 @@ def admin_info_inspector(id):
             flash('Данные пользователя изменены!')
 
     this_user = db.session.query(User.inspector).filter(User.id == id).first()
-    if not this_user.inspector:
+    if not this_user or not this_user.inspector:
         return render_template('jasny/admin/show_insp_information.html',
                                page_name='Информация инспектора',
                                username=current_user.min_name(),
