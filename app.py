@@ -5,7 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 database_config = dict(host='192.168.16.2',
                        user='root',
                        password='t513t5130',
-                       database='pkz')
+                       database='pkz_new')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 't513t513t513t513t513t513t513t513t513t513'

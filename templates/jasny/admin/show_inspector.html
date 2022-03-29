@@ -44,9 +44,9 @@
         <table class="table table-bordered table-condensed">
             <thead>
                 <tr>
-                    <th style="width: 40px;">#</th>
+                    <th style="width: 40px;">ID</th>
                     <th style="width: 300px;">ФИО</th>
-                    <th>Действия</th>
+                    <th style="width: 200px;">Действия</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,10 +54,8 @@
                 <tr>
                     <td>{{ insp['id'] }}</td>
                     <td>{{ insp['name'] }}</td>
-                    <td><a class="btn btn-primary btn-xs" role="button"
-                            style="margin-right: 5px;">Редактировать</a><button class="btn btn-info btn-xs"
-                            type="button" style="margin-right: 5px;">Деактивировать</button>
-                        <button class="btn btn-danger btn-xs" type="button" style="margin-right: 5px;">Удалить</button>
+                    <td><a href="/admin/staff/inspector/{{ insp['id'] }}" class="btn btn-primary btn-sm" role="button"
+                            style="margin-right: 5px;">Просмотр</a>
                     </td>
                 </tr>
                 {% endfor %}
