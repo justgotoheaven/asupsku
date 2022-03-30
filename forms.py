@@ -28,3 +28,10 @@ class ChangeInspectorEmailAndPassword(FlaskForm):
 
 class DeleteInspector(FlaskForm):
     submit = SubmitField(label='Да, удалить инспектора')
+
+class AddCategoryForm(FlaskForm):
+    cat_name = StringField(validators=[DataRequired(), Length(min=3)], id='cat_name', render_kw={'placeholder':'Введите наименование...'})
+    cat_desc = StringField(validators=[DataRequired()], id="cat_desc", render_kw={'placeholder':'Введите описание...'})
+
+class DeleteCategory(FlaskForm):
+    submit = SubmitField(label='Да, удалить категорию')
