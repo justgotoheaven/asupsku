@@ -1,14 +1,22 @@
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
     <a class="navmenu-brand visible-md visible-lg" href="/admin">Панель администратора СУП</a>
     <ul class="nav navmenu-nav">
+      {%if active == 1 %}
       <li class="dropdown active">
+      {% else %}
+      <li class="dropdown">
+      {% endif %}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Инспекторы<b class="caret"></b></a>
         <ul class="dropdown-menu navmenu-nav">
           <li><a href="/admin/staff/inspectors">Просмотр инспекторов</a></li>
           <li><a href="/admin/staff/add_inspector">Регистрация инспектора</a></li>
         </ul>
       </li>
-      <li><a href="../navmenu-push/">Категории услуг</a></li>
+      {%if active == 2 %}
+      <li class="active">
+        {% else %}
+      
+      <li>{% endif %}<a href="/admin/categories">Категории услуг</a></li>
       <li><a href="/inspector">Панель инспектора</a></li>
     </ul>
     <ul class="nav navmenu-nav">
