@@ -92,5 +92,10 @@ class Pokaz(db.Model):
 class Categories(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer(), primary_key=True)
-    category_name = db.Column(db.String(128), unique=True)
+    name = db.Column(db.String(128), unique=True)
+    description = db.Column(db.String(300))
+    added_by = db.Column(db.Integer(), nullable=False)
+    added_on = db.Column(db.DateTime(), default=datetime.now)
     cost = db.Column(db.Float())
+    cost_changed_on = db.Column(db.DateTime())
+    cost_changed_by = db.Column(db.Integer())

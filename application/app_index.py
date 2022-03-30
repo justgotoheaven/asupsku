@@ -2,8 +2,7 @@
 from app import app # Точка входа в приложение Flask
 from flask import session, render_template, redirect, url_for
 from flask_login import login_required, current_user
-from models import User, Counter, Pokaz, db # Модели и база данных
-import auth # Авторизация
+from models import User, Counter, Pokaz # Модели и база данных
 import utils
 
 # index page

@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
+import sys
+
+p = os.path.abspath('.')
+sys.path.insert(1, p)
+
 from app import app, db # Точка входа в приложение Flask
 from flask import render_template, Response, flash, request
 from flask_login import login_required, current_user
@@ -8,14 +14,6 @@ from transliterate import translit
 from random import randint
 from utils import generate_password
 import string
-
-@app.route('/admin/')
-@login_required
-def admin_page():
-    if not current_user.is_admin():
-        return Response(status=403)
-    return render_template('jasny/admin/index.html', page_name='Панель администратора',
-                           username=current_user.min_name())
 
 # Раздел работы с пользователями
 @app.route('/admin/staff/inspectors', methods=['POST','GET'])
