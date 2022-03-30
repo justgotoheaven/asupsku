@@ -9,6 +9,7 @@ from models import User, Categories
 from flask_login import login_required, current_user
 from flask import Response, render_template, request, flash
 from forms import AddCategoryForm, DeleteCategory
+from datetime import datetime
 
 
 @app.route('/admin/categories', methods=['POST', 'GET'])
@@ -22,7 +23,10 @@ def admin_categories_index():
     if request.method == 'POST' and add_form.validate_on_submit():
         new_cat = Categories(name=add_form.cat_name.data,
                              description=add_form.cat_desc.data,
-                             added_by=current_user.id)
+                             added_by=current_user.id,
+                             cost=0,
+                             cost_changed_by=current_user.id,
+                             cost_changed_on=datetime.now())
         try:
             db.session.add(new_cat)
             db.session.commit()
@@ -80,3 +84,35 @@ def admin_delete_category(id):
                            form=delete_form,
                            cat_id = id,
                            cat_name = cat_data.name)
+
+
+@app.route('/admin/categories/check/<int:id>', methods=['POST', 'GET'])
+@login_required
+def admin_check_category(id):
+    if not current_user.is_admin():
+        return Response(status=403)
+    template = 'jasny/admin/categories/category_show_info.html'
+    category = Categories.query.filter_by(id = id).first()
+    if not category:
+        return render_template(template,
+                               page_name='Просмотр категории',
+                               username = current_user.min_name(),
+                               not_cat = True)
+    who_register = ''
+    who_changed_cost = ''
+    try:
+        who_register = db.session.query(User.name).filter_by(id=category.added_by).first().name
+    except:
+        who_register = 'Неизвестно'
+    try:
+        who_changed_cost = db.session.query(User.name).filter_by(id=category.cost_changed_by).first().name
+    except:
+        who_changed_cost = 'Неизвестно'
+    cat_ex = dict(added_by=who_register,
+                  cost_changed_by=who_changed_cost)
+    return render_template(template,
+                           page_name='Просмотр категории',
+                           username = current_user.min_name(),
+                           show_data=True,
+                           cat=category,
+                           cat_ex = cat_ex)
