@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, SubmitField
+from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length
 
 # Форма авторизации пользователя (/account/login)
@@ -35,3 +35,8 @@ class AddCategoryForm(FlaskForm):
 
 class DeleteCategory(FlaskForm):
     submit = SubmitField(label='Да, удалить категорию')
+
+class AddHouseForm(FlaskForm):
+
+    address = HiddenField(id='address_text', name='address_text', validators=[DataRequired()])
+    selected_kladr = HiddenField(id='selected_kladr', validators=[DataRequired()])

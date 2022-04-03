@@ -47,6 +47,7 @@ class House(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     adres = db.Column(db.String(255), unique=True)
     added_by = db.Column(db.Integer())
+    added_on = db.Column(db.DateTime(), default=datetime.now)
 
 
 class Address(db.Model):

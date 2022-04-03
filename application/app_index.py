@@ -11,6 +11,8 @@ def index():
     try:
         if current_user.is_admin():
             return redirect(url_for('admin_page'))
+        elif current_user.is_inspector():
+            return redirect(url_for('inspector_index'))
         else:
             return redirect(url_for('app_main'))
     except:
@@ -21,7 +23,9 @@ def index():
 @login_required
 def app_main():
     if current_user.is_admin():
-        return redirect(url_for('admin_page'))    
+        return redirect(url_for('admin_page'))
+    if current_user.is_inspector():
+        return redirect(url_for('inspector_index'))
     counters = Counter.query.filter(Counter.owner == current_user.id).all()
     counters_data = []
     for c in counters:
