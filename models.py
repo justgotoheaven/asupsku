@@ -55,6 +55,7 @@ class Address(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     house = db.Column(db.Integer())
     kv = db.Column(db.Integer(), unique=True)
+    owner = db.Column(db.Integer())
 
 
 class Counter(db.Model):
