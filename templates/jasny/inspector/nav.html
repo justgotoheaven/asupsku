@@ -1,0 +1,48 @@
+<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
+    <a class="navmenu-brand visible-md visible-lg" href="/inspector">Панель инспектора СУП</a>
+    <ul class="nav navmenu-nav">
+      {%if active == 1 %}
+      <li class="active">
+        {% else %}
+      <li>{% endif %}<a href="/inspector/users">Жильцы</a></li>
+      {%if active == 6 %}
+      <li class="active">
+        {% else %}
+      <li>{% endif %}<a href="/inspector/houses">МКД</a></li>
+      {%if active == 2 %}
+      <li class="active">
+        {% else %}
+      <li>{% endif %}<a href="/inspector/flats">Квартиры</a></li>
+      {%if active == 3 %}
+      <li class="active">
+        {% else %}
+      <li>{% endif %}<a href="/inspector/meters">Приборы учета</a></li>
+      {%if active == 4 %}
+      <li class="active">
+        {% else %}
+      <li>{% endif %}<a href="/inspector/costs">Тарифы</a></li>
+      {%if active == 5 %}
+      <li class="active">
+        {% else %}
+      
+      <li>{% endif %}<a href="/inspector/appeals">Обращения</a></li>
+      
+    </ul>
+    <ul class="nav navmenu-nav">
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class='glyphicon glyphicon-user'></span>  {{username}}<b class="caret"></b></a>
+        <ul class="dropdown-menu navmenu-nav">
+          <li><a href="#">Настройки аккаунта</a></li>
+          <li><a href="/account/logout">Выход</a></li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg">
+    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">Инспектор СУП</a>
+  </div>

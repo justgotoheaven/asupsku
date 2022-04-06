@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    {% with username=username, active=2 %}
+    {% include "jasny/admin/nav.html" %}
+    {% endwith %}
+    <div class="container">
+        <h1>Категории коммунальных услуг</h1>
+        {% if empty %}
+        <div style="margin-top: 30px; margin-bottom: 30px;">
+            <h3>Категории отсутствуют в системе.</h3>
+        </div>
+        {% else %}
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-condensed">
+                <caption>Категории в системе</caption>
+                <thead>
+                    <tr>
+                        <th style="width: 20px;">ID</th>
+                        <th>Категория</th>
+                        <th>Описание</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categories %}
+                    <tr>
+                        <td>{{ cat.id }}</td>
+                        <td>{{ cat.name }}</td>
+                        <td>{{ cat.description }}</td>
+                        <td><a class="btn btn-info btn-sm" role="button" href="/admin/categories/check/{{ cat.id }}"
+                                style="padding: 6px 10px;">Просмотр</a> <a class="btn btn-danger btn-sm" role="button"
+                                href="/admin/categories/delete/{{ cat.id }}" style="padding: 6px 10px;">Удалить</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Добавить новую категорию услуг</h3>
+            </div>
+            <div class="panel-body">
+                <form method="post">
+                    {{ form.csrf_token }}
+                    <div class="row">
+                        <div class="form-group col-md-4"><label class="control-label">Наименование
+                                категории:&nbsp;</label>{{ form.cat_name(class_='form-control')}}</div>
+                        <div class="form-group col-md-8"><label class="control-label">Описание:&nbsp;</label>{{
+                            form.cat_desc(class_='form-control')}}</div>
+                    </div>
+                    <button class="btn btn-primary" type="submit">Добавить</button>
+                </form>
+                {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-warning" role="alert" style="margin-top: 20px;"><span><strong>{{ message
+                            }}</strong><br></span></div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

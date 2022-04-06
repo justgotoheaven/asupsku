@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+        integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+</head>
+
+<body>
+    {% with username=username,active=6 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+    <div class="container">
+        <h1>Зарегистрированные МКД</h1>
+        <hr>
+        <div class="table-responsive">
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <td style="width: 15px;">ID</td>
+                        <td>Адрес</td>
+                        <td>Зарегистрировано<br>квартир</td>
+                        <td>Действия</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in house_info %}
+                        <tr>
+                            <td>
+                                {{ h['id'] }}
+                            </td>
+                            <td>
+                                {{ h['address'] }}
+                            </td>
+                            <td>
+                                {{ h['kvart'] }}
+                            </td>
+                            <td>
+                                <a href="/inspector/houses/{{ h['id'] }}" class="btn btn-sm btn-info">Просмотр</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <a href="/inspector/houses/add" class="btn btn-lg btn-primary">Добавить МКД</a>
+    </div>
+</body>
+
+</html>
