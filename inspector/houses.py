@@ -1,7 +1,7 @@
 from app import app,db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
-from models import User, House
+from models import User, House, Address
 from forms import AddHouseForm
 
 
@@ -11,7 +11,6 @@ from forms import AddHouseForm
 def inspector_houses_add():
     if not current_user.is_inspector():
         return Response(status=403)
-    template_name = 'jasny/inspector/add_house.html'
     add_house_form = AddHouseForm()
     if request.method == 'POST' and add_house_form.validate_on_submit():
         new_address = add_house_form.address.data
@@ -35,3 +34,27 @@ def inspector_houses_add():
                            form=add_house_form,
                            page_name='Добавить МКД',
                            username=current_user.min_name())
+
+
+# Просмотр информации о МКД
+@app.route('/inspector/houses', methods=['GET','POST'])
+@login_required
+def inspector_houses_all():
+    if not current_user.is_inspector():
+        return Response(status=403)
+    all_houses = db.session.query(House.id, House.adres).all()
+    house_info = list()
+    for h in all_houses:
+        house = dict(id=h.id,
+                     address=h.adres)
+        kvart = db.session.query(Address.id).filter_by(house=h.id).all()
+        if not kvart:
+            house['kvart'] = 0
+        else:
+            house['kvart'] = len(kvart)
+        house_info.append(house)
+
+    return render_template('jasny/inspector/all_houses.html',
+                           page_name = 'Просмотр МКД',
+                           username = current_user.min_name(),
+                           house_info = house_info)
