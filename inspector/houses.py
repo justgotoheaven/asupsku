@@ -37,7 +37,7 @@ def inspector_houses_add():
 
 
 # Просмотр информации о МКД
-@app.route('/inspector/houses', methods=['GET','POST'])
+@app.route('/inspector/houses', methods=['GET', 'POST'])
 @login_required
 def inspector_houses_all():
     if not current_user.is_inspector():
@@ -58,3 +58,29 @@ def inspector_houses_all():
                            page_name = 'Просмотр МКД',
                            username = current_user.min_name(),
                            house_info = house_info)
+
+@app.route('/inspector/houses/<int:id>')
+@login_required
+def inspector_houses_info(id):
+    if not current_user.is_inspector():
+        return Response(status=403)
+    this_house = House.query.filter_by(id=id).limit(1).first()
+    if not this_house:
+        return render_template('jasny/inspector/house_info.html',
+                               page_name = 'Информация о МКД',
+                               username = current_user.min_name(),
+                               not_house = True)
+    house = dict(id=this_house.id,
+                 adres=this_house.adres,
+                 added_on=this_house.added_on)
+    added_by_user = db.session.query(User.name).filter_by(id=this_house.added_by).first()
+    if added_by_user:
+        house['added_by'] = added_by_user.name
+    else:
+        house['added_by'] = 'Неизвестно'
+    return render_template('jasny/inspector/house_info.html',
+                           page_name='Информация о МКД',
+                           username=current_user.min_name(),
+                           show_data=True,
+                           house=house)
+
