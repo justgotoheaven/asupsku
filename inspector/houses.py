@@ -1,4 +1,4 @@
-from app import app,db
+from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
 from models import User, House, Address
@@ -19,10 +19,10 @@ def inspector_houses_add():
             flash('Ошибка: данный МКД уже зарегистрирован в системе')
             return render_template('jasny/inspector/add_house.html',
                                    form=add_house_form,
-                                    page_name='Добавить МКД',
-                                    username=current_user.min_name())
+                                   page_name='Добавить МКД',
+                                   username=current_user.min_name())
         new_house = House(adres=new_address,
-                          added_by = current_user.id)
+                          added_by=current_user.id)
         try:
             db.session.add(new_house)
             db.session.commit()
@@ -55,9 +55,10 @@ def inspector_houses_all():
         house_info.append(house)
 
     return render_template('jasny/inspector/all_houses.html',
-                           page_name = 'Просмотр МКД',
-                           username = current_user.min_name(),
-                           house_info = house_info)
+                           page_name='Просмотр МКД',
+                           username=current_user.min_name(),
+                           house_info=house_info)
+
 
 @app.route('/inspector/houses/<int:id>')
 @login_required
@@ -67,9 +68,9 @@ def inspector_houses_info(id):
     this_house = House.query.filter_by(id=id).limit(1).first()
     if not this_house:
         return render_template('jasny/inspector/house_info.html',
-                               page_name = 'Информация о МКД',
-                               username = current_user.min_name(),
-                               not_house = True)
+                               page_name='Информация о МКД',
+                               username=current_user.min_name(),
+                               not_house=True)
     house = dict(id=this_house.id,
                  adres=this_house.adres,
                  added_on=this_house.added_on)
@@ -83,4 +84,3 @@ def inspector_houses_info(id):
                            username=current_user.min_name(),
                            show_data=True,
                            house=house)
-
