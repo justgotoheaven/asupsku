@@ -46,6 +46,7 @@ def inspector_flats_show():
     show_list = False
     if request.args.get('house') is not None:
         house_filter = request.args.get('house')
+        house_adres = db.session.query(House.adres).filter_by(id=house_filter).limit(1).first().adres
         show_list = True
         flats = db.session.query(Address.id, Address.kv, Address.owner).filter_by(house=house_filter).all()
         if request.args.get('print') is not None and request.args.get('print') == '1':
@@ -53,11 +54,16 @@ def inspector_flats_show():
                                    page_name='Печать информации о квартирах',
                                    house_adres=db.session.query(House.adres).filter_by(id=house_filter).limit(1).first().adres,
                                    flats=flats)
+        return render_template('jasny/inspector/show_flats.html',
+                               page_name='Просмотр квартир',
+                               username=current_user.min_name(),
+                               show_list=show_list,
+                               house_adres = house_adres,
+                               house_id=house_filter,
+                               flats=flats,
+                               form=filter_form)
     return render_template('jasny/inspector/show_flats.html',
                            page_name='Просмотр квартир',
                            username=current_user.min_name(),
                            show_list=show_list,
-                           house_adres = db.session.query(House.adres).filter_by(id=house_filter).limit(1).first().adres,
-                           house_id=house_filter,
-                           flats=flats,
                            form=filter_form)
