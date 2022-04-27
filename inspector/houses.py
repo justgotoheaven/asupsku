@@ -17,19 +17,16 @@ def inspector_houses_add():
         checked_house = db.session.query(House.id).filter_by(adres=new_address).limit(1).first()
         if checked_house:
             flash('Ошибка: данный МКД уже зарегистрирован в системе')
-            return render_template('jasny/inspector/add_house.html',
-                                   form=add_house_form,
-                                   page_name='Добавить МКД',
-                                   username=current_user.min_name())
-        new_house = House(adres=new_address,
-                          added_by=current_user.id)
-        try:
-            db.session.add(new_house)
-            db.session.commit()
-            flash('МКД по адресу: {} зарегистрирован в системе.'.format(new_address))
-        except Exception as e:
-            db.session.rollback()
-            flash('Ошибка создания МКД. Техническая информация: {}'.format(e))
+        else:
+            new_house = House(adres=new_address,
+                              added_by=current_user.id)
+            try:
+                db.session.add(new_house)
+                db.session.commit()
+                flash('МКД по адресу: {} зарегистрирован в системе.'.format(new_address))
+            except Exception as e:
+                db.session.rollback()
+                flash('Ошибка создания МКД. Техническая информация: {}'.format(e))
     return render_template('jasny/inspector/add_house.html',
                            form=add_house_form,
                            page_name='Добавить МКД',
@@ -60,7 +57,7 @@ def inspector_houses_all():
                            house_info=house_info)
 
 
-@app.route('/inspector/houses/<int:id>')
+@app.route('/inspector/houses/<int:id>', methods=['GET'])
 @login_required
 def inspector_houses_info(id):
     if not current_user.is_inspector():
@@ -79,6 +76,17 @@ def inspector_houses_info(id):
         house['added_by'] = added_by_user.name
     else:
         house['added_by'] = 'Неизвестно'
+
+    if request.args.get('show_flats') is not None:
+        mkd_flat = db.session.query(Address.kv, Address.owner).filter_by(house=id).all()
+        return render_template('jasny/inspector/house_info.html',
+                               page_name='Информация о МКД',
+                               username=current_user.min_name(),
+                               show_data=True,
+                               house=house,
+                               show_flats=True,
+                               flats=mkd_flat)
+
     return render_template('jasny/inspector/house_info.html',
                            page_name='Информация о МКД',
                            username=current_user.min_name(),
