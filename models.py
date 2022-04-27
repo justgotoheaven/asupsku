@@ -56,6 +56,17 @@ class Address(db.Model):
     house = db.Column(db.Integer())
     kv = db.Column(db.Integer(), unique=True)
     owner = db.Column(db.Integer())
+    registered_in = db.Column(db.Integer()) # Число зарегистрированных в квартире
+    added_by = db.Column(db.Integer())
+    added_on = db.Column(db.DateTime(), default=datetime.now)
+    changed_on = db.Column(db.Integer())
+    changed_by = db.Column(db.DateTime())
+
+    def change(self, user):
+        self.changed_by = user
+        self.changed_on = datetime.now
+
+
 
 
 class Counter(db.Model):
