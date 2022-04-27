@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField
+from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField, IntegerField, SelectField
 from wtforms.validators import DataRequired, Length
 
 # Форма авторизации пользователя (/account/login)
@@ -40,3 +40,8 @@ class AddHouseForm(FlaskForm):
 
     address = HiddenField(id='address_text', name='address_text', validators=[DataRequired()])
     selected_kladr = HiddenField(id='selected_kladr', validators=[DataRequired()])
+
+class AddFlatForm(FlaskForm):
+
+    number = IntegerField(validators=[DataRequired()], id="flat_number")
+    house = SelectField(validators=[DataRequired()], coerce=int, validate_choice=True)
