@@ -37,7 +37,40 @@
                 <p><strong>Кем добавлен: </strong>{{ house['added_by'] }}</p>
             </div>
         </div>
+        {% if show_flats %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Список зарегистрированных квартир</h3>
+            </div>
+            <div class="panel-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-condensed">
+                        <thead>
+                            <tr>
+                                <th>N квартиры</th>
+                                <th>Владелец</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for flat in flats %}
+                            <tr>
+                                <td>{{ flat.kv }}</td>
+                                <td>{{ flat.owner }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
         <a class="btn btn-info" role="button" href="/inspector/houses">Вернуться к списку МКД</a>
+        {% if show_flats %}
+        <a class="btn btn-primary" role="button" href="/inspector/houses/{{ house['id'] }}">Скрыть список квартир</a>
+        {% else %}
+        <a class="btn btn-primary" role="button" href="/inspector/houses/{{ house['id'] }}?show_flats=1">Показать список квартир</a>
+        {% endif %}
         {% endif %}
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
