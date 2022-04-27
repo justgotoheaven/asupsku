@@ -73,15 +73,14 @@ class Counter(db.Model):
     __tablename__ = 'counter'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    pokaz = db.Column(db.Float())
-    # временно привязка в пользователю, переделать под квартиры
-    owner = db.Column(db.Integer())
-    address = db.Column(db.Integer(), nullable=False)
-    znomer = db.Column(db.Integer(), nullable=False)
-    ust_data = db.Column(db.Date())
-    pov_data = db.Column(db.Date())
-    nextpov_data = db.Column(db.Date())
-    tariff = db.Column(db.Float())
+    category = db.Column(db.Integer(), nullable=False)
+    setup_date = db.Column(db.Date())
+    setup_on = db.Column(db.String(100))
+    approved = db.Column(db.Boolean())
+    approve_date = db.Column(db.Date())
+    next_approve_date = db.Column(db.Date())
+    serial_num = db.Column(db.String(100))
+    flat = db.Column(db.Integer(), nullable=False)
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.name)
