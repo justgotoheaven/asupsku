@@ -2,11 +2,11 @@ from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
 from models import House, Address
-from forms import AddFlatForm
+from forms import AddFlatForm, ShowFlatsFilterHouseForm
 
 @app.route('/inspector/flats/add',methods=['POST','GET'])
 @login_required
-def inspector_flats_ass():
+def inspector_flats_add():
     if not current_user.is_inspector():
         return Response(status=403)
     houses = db.session.query(House.id, House.adres).all()
@@ -34,3 +34,30 @@ def inspector_flats_ass():
                            page_name='Создание квартиры',
                            username=current_user.min_name(),
                            form=add_form)
+
+@app.route('/inspector/flats/show',methods=['POST','GET'])
+@login_required
+def inspector_flats_show():
+    if not current_user.is_inspector():
+        return Response(status=403)
+    filter_form = ShowFlatsFilterHouseForm()
+    all_houses = db.session.query(House.id, House.adres).all()
+    filter_form.house.choices = [(h.id, h.adres) for h in all_houses]
+    show_list = False
+    if request.args.get('house') is not None:
+        house_filter = request.args.get('house')
+        show_list = True
+        flats = db.session.query(Address.id, Address.kv, Address.owner).filter_by(house=house_filter).all()
+        if request.args.get('print') is not None and request.args.get('print') == '1':
+            return render_template('jasny/inspector/show_flats_print.html',
+                                   page_name='Печать информации о квартирах',
+                                   house_adres=db.session.query(House.adres).filter_by(id=house_filter).limit(1).first().adres,
+                                   flats=flats)
+    return render_template('jasny/inspector/show_flats.html',
+                           page_name='Просмотр квартир',
+                           username=current_user.min_name(),
+                           show_list=show_list,
+                           house_adres = db.session.query(House.adres).filter_by(id=house_filter).limit(1).first().adres,
+                           house_id=house_filter,
+                           flats=flats,
+                           form=filter_form)
