@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    {% with username=username,active=2 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Просмотр зарегистрированных квартир</h3>
+                <form method="get" class="form">
+                    <div class="form-group"><label>Выберите МКД для просмотра квартир:</label>{{
+                        form.house(class_='form-control') }}</div>
+                    <button type="submit" class="btn btn-primary">Просмотр квартир</button>
+                </form>
+                <a href="/inspector/flats/add" class="btn btn-success" style="margin-top: 10px;">Зарегистрировать
+                    квартиру</a>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top: 20px;">
+        {% if show_list %}
+        <h4>Список квартир по адресу <b>{{ house_adres }}</b></h4>
+        <a href="/inspector/flats/show?house={{ house_id }}&print=1">Распечатать список квартир</a>
+        <div class="table-responsive">
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">ID</th>
+                        <th style="width: 40px;">N квартиры</th>
+                        <th>Владелец</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in flats %}
+                    <tr>
+                        <td>{{ f.id }}</td>
+                        <td>{{ f.kv }}</td>
+                        <td>{{ f.owner }}</td>
+                        <td><a class="btn btn-primary btn-sm" role="button" style="margin-right: 5px;">Просмотр</a>
+                            <a class="btn btn-success btn-sm" role="button" style="margin-right: 5px;" href="/inspector/meters/add?flat_id={{ f.id }}">Добавить прибор
+                                учета</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+
+</body>
+
+</html>
