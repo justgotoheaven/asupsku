@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-database_config = dict(host='192.168.16.2',
-                       user='root',
-                       password='t513t5130',
-                       database='pkz_new')
+database_config = dict(host='db4free.net',
+                       user='asupsku_admin',
+                       password='t513t513t513',
+                       database='asupsku_db_main')
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 't513t513t513t513t513t513t513t513t513t513'
