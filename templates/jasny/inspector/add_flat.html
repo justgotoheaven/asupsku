@@ -29,6 +29,7 @@
             <form method="post">
                 {{ form.csrf_token }}<label>МКД:&nbsp;</label>{{ form.house(class_='form-control') }}
                 <label>Номер квартиры:&nbsp;</label>{{ form.number(class_='form-control') }}
+                <label>Количество прописанных: </label>{{ form.registered_in(class_='form-control') }}
                 <button class="btn btn-default" type="submit" style="margin-top:25px;">Создать квартиру</button>
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}

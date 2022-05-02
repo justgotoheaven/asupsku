@@ -35,10 +35,10 @@
                 <label>Заводской номер:&nbsp;</label>{{ form.serial_num(class_='form-control') }}
                 <label>Дата установки:&nbsp;</label>{{ form.setup_date(class_='form-control') }}
                 <label>Место установки:&nbsp;</label>{{ form.setup_on(class_='form-control') }}
-                <label>Дата поверки:&nbsp;</label>{{ form.approve_date(class_='form-control') }}
-                <label>Дата следующей поверкир:&nbsp;</label>{{ form.next_approve_date(class_='form-control') }}
+                <label>Дата поверки:&nbsp;</label><em>Оставьте поле пустым, если счетчик не поверен!</em>{{ form.approve_date(class_='form-control') }}
+                <label>Дата следующей поверки:&nbsp;</label>{{ form.next_approve_date(class_='form-control') }}
                 {{ form.flat_id }}
-                <button class="btn btn-default" type="submit" style="margin-top:25px;">Зарегистрировать ПУ</button>
+                <button class="btn btn-default" type="submit" style="margin-top:25px;">Зарегистрировать прибор учета</button>
                 {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 {% for message in messages %}
