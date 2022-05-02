@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField, IntegerField, SelectField, DateField
+from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField, IntegerField, SelectField, DateField, BooleanField
 from wtforms.validators import DataRequired, Length
 
 # Форма авторизации пользователя (/account/login)
@@ -45,6 +45,7 @@ class AddFlatForm(FlaskForm):
 
     number = IntegerField(validators=[DataRequired()], id="flat_number")
     house = SelectField(validators=[DataRequired()], coerce=int, validate_choice=True)
+    registered_in = IntegerField(validators=[DataRequired()], id='flat_registered_in')
 
 class AddMeterForm(FlaskForm):
 
@@ -53,7 +54,8 @@ class AddMeterForm(FlaskForm):
     serial_num = StringField(validators=[DataRequired(), Length(min=6)], name='meter_serial_num')
     setup_on = StringField(validators=[DataRequired(), Length(min=5)],name='meter_setup_on')
     setup_date = DateField(name='meter_setup_date')
-    approve_date = DateField(validators=[DataRequired()],name='meter_approve_date')
+
+    approve_date = DateField(name='meter_approve_date')
     next_approve_date = DateField(name='meter_next_approve_date')
     flat_id = HiddenField(name='meter_flat')
 
