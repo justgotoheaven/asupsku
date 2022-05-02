@@ -1,7 +1,7 @@
 from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
-from models import House, Address
+from models import House, Address, Counter, User, Categories
 from forms import AddFlatForm, ShowFlatsFilterHouseForm
 
 @app.route('/inspector/flats/add',methods=['POST','GET'])
@@ -18,9 +18,11 @@ def inspector_flats_add():
         if checked_flat:
             flash('Квартира с данным номером уже зарегистрирована в этом МКД')
         else:
+
             new_flat = Address(house=add_form.house.data,
                                kv=add_form.number.data,
-                               added_by=current_user.id)
+                               added_by=current_user.id,
+                               registered_in=add_form.registered_in.data)
             house_adres = db.session.query(House.adres).filter_by(id=add_form.house.data).first()
 
             try:
@@ -67,3 +69,23 @@ def inspector_flats_show():
                            username=current_user.min_name(),
                            show_list=show_list,
                            form=filter_form)
+
+@app.route('/inspector/flats/show/<int:id>',methods=['POST','GET'])
+@login_required
+def inspector_flats_show_by_id(id):
+    if not current_user.is_inspector():
+        return Response(status=403)
+    flat_info = db.session.query(Address).filter_by(id=id).limit(1).first()
+    if not flat_info:
+        return Response(status=404)
+    flat_house = db.session.query(House.adres).filter_by(id=flat_info.house).limit(1).first()
+    flat_meters = db.session.query(Counter.name, Counter.id).filter_by(flat=id).all()
+    flat_create_user = db.session.query(User.name).filter_by(id=flat_info.added_by).limit(1).first()
+    flat_info.added_by = flat_create_user.name
+    return render_template('jasny/inspector/show_flat_info.html',
+                           username=current_user.min_name(),
+                           page_name='Просмотр информации о квартире',
+                           flat_address = '{} кв. {}'.format(flat_house.adres, flat_info.kv),
+                           flat = flat_info,
+                           meters = flat_meters
+                           )
