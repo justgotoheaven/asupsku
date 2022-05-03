@@ -78,9 +78,25 @@ def inspector_users_add():
                            form=add_form)
 
 
-@app.route('/inspector/users/user_card', methods=['GET'])
+@app.route('/inspector/users/show/<int:id>', methods=['POST', 'GET'])
 @login_required
-def inspector_users_usercard():
+def inspector_users_showinfo(id):
     if not current_user.is_inspector():
-        return Response(string=403)
-
+        return Response(status=403)
+    user = db.session.query(User.id,
+                            User.login,
+                           User.name,
+                           User.email,
+                           User.created_on,
+                           User.created_by).filter(User.id == id).first()
+    who_registered = ''
+    try:
+        who_registered = db.session.query(User.name).filter(User.id == user.created_by).first().name
+    except:
+        who_registered = 'Неизвестно'
+    return render_template('jasny/inspector/show_user_information.html',
+                           user = user,
+                           who_registered = who_registered,
+                           show_data = True,
+                           page_name='Информация о жильце',
+                           username=current_user.min_name())
