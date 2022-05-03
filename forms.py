@@ -20,8 +20,9 @@ class AddInspectorForm(FlaskForm):
 # Форма регистрации пользователя
 class AddUserForm(FlaskForm):
     user_name = StringField(validators=[DataRequired()], id='user_name')
-    email = StringField(id='user_email')
-    tel = StringField
+    email = StringField(validators=[DataRequired()], id='user_email')
+    tel = StringField(name='user_tel')
+
 
 
 class FindInspectorForm(FlaskForm):
