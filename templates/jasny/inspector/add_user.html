@@ -52,42 +52,11 @@
                         {% endwith %}
                     </form>
                     {% if user %}
-                    <hr>
-                    <div class="user_card">
-                        <h4>
-                            Карточка пользователя <strong>{{ user_name }}</strong><a href="javascript:window.print ()" class="btn-sm btn-primary">Печать</a>
-                        </h4>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Наименование</th>
-                                    <th>Значение</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                               <tr>
-                                   <td>ID в системе</td>
-                                   <td>{{ user.id }} </td>
-                               </tr>
-                               <tr>
-                                   <td>ФИО</td>
-                                   <td>{{ user.name }}</td>
-                               </tr>
-                               <tr>
-                                   <td>Логин</td>
-                                   <td>{{ user.login }}</td>
-                               </tr>
-                               <tr>
-                                   <td>Пароль</td>
-                                   <td>{{ user.password_hash }}</td>
-                               </tr>
-                               <tr>
-                                   <td>E-mail</td>
-                                   <td>{{ user.email }}</td>
-                               </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <form action="/inspector/users/usercard" method="post">
+                        <input type="hidden" name="password" value="{{ user.password_hash }}" />
+                        <input type="hidden" name="id" value="{{ user.id }}" />
+                        <button type="submit" class="btn btn-primary">Печать карточки пользователя</button>
+                    </form>
                     {% endif %}
                 </div>
             </div>

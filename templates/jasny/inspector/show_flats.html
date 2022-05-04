@@ -53,7 +53,7 @@
                     <tr>
                         <td>{{ f.id }}</td>
                         <td>{{ f.kv }}</td>
-                        <td>{{ f.owner }}</td>
+                        <td>{{ owners[f.id] }}</td>
                         <td><a class="btn btn-primary btn-sm" role="button" style="margin-right: 5px;" 
                             href="/inspector/flats/show/{{ f.id }}">Просмотр</a>
                             <a class="btn btn-success btn-sm" role="button" style="margin-right: 5px;" href="/inspector/meters/add?flat_id={{ f.id }}">Добавить прибор
