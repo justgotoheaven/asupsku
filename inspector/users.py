@@ -2,7 +2,7 @@ from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
 from models import User
-from forms import FindUserForm, AddUserForm
+from forms import FindUserForm, AddUserForm, ChangeUserEmailAndPassword
 import string
 from utils import generate_password
 from transliterate import translit
@@ -83,6 +83,21 @@ def inspector_users_add():
 def inspector_users_showinfo(id):
     if not current_user.is_inspector():
         return Response(status=403)
+    change_form = ChangeUserEmailAndPassword()
+    new_data = dict()
+    if request.method == 'POST' and change_form.is_submitted():
+        updating_data = dict()
+        if change_form.email.data:
+            updating_data['email'] = change_form.email.data
+            new_data['email'] = change_form.email.data
+        if change_form.password.data:
+            from werkzeug.security import generate_password_hash
+            updating_data['password_hash'] = generate_password_hash(change_form.password.data)
+            new_data['pass'] = change_form.password.data
+        if updating_data:
+            User.query.filter_by(id=id).update(updating_data)
+            db.session.commit()
+            flash('Данные пользователя изменены!')
     user = db.session.query(User.id,
                             User.login,
                            User.name,
@@ -98,5 +113,23 @@ def inspector_users_showinfo(id):
                            user = user,
                            who_registered = who_registered,
                            show_data = True,
+                           form=change_form,
                            page_name='Информация о жильце',
-                           username=current_user.min_name())
+                           username=current_user.min_name(),
+                           update = new_data)
+
+
+@app.route('/inspector/users/usercard',methods=['POST'])
+@login_required
+def inspector_usercard():
+    if not current_user.is_inspector():
+        return Response(status=403)
+    if request.method == 'POST' and request.form.get('password') is not None and request.form.get('id') is not None:
+        user = db.session.query(User.id, User.name, User.login, User.email).filter_by(id = request.form.get('id')).limit(1).first()
+        if not user:
+            return Response(status=404)
+
+        return render_template('/jasny/inspector/user_card.html',
+                               user=user,
+                               page_name='Карточка пользователя',
+                               user_password = request.form.get('password'))
