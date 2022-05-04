@@ -62,10 +62,11 @@ class Address(db.Model):
     changed_on = db.Column(db.Integer())
     changed_by = db.Column(db.DateTime())
 
+    owner_name = None
+
     def change(self, user):
         self.changed_by = user
         self.changed_on = datetime.now
-
 
 
 

@@ -40,6 +40,10 @@ class ChangeInspectorEmailAndPassword(FlaskForm):
     password = StringField(validators=[Length(min=8)], render_kw={'placeholder': 'Введите новый пароль...'})
 
 
+class ChangeUserEmailAndPassword(FlaskForm):
+    email = EmailField(id="new_user_email", render_kw={'placeholder': 'Введите новый E-mail...'})
+    password = StringField(id="new_user_password", validators=[Length(min=8)], render_kw={'placeholder': 'Введите новый пароль...'})
+
 class DeleteInspector(FlaskForm):
     submit = SubmitField(label='Да, удалить инспектора')
 
