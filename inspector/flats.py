@@ -1,3 +1,5 @@
+import datetime
+
 from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
@@ -90,7 +92,10 @@ def inspector_flats_show_by_id(id):
     flat_house = db.session.query(House.adres).filter_by(id=flat_info.house).limit(1).first()
     flat_meters = db.session.query(Counter.name, Counter.id).filter_by(flat=id).all()
     flat_create_user = db.session.query(User.name).filter_by(id=flat_info.added_by).limit(1).first()
-    flat_owner = db.session.query(User.name).filter_by(id=flat_info.owner).limit(1).first().name
+    if flat_info.owner is not None:
+        flat_owner = db.session.query(User.name).filter_by(id=flat_info.owner).limit(1).first().name
+    else:
+        flat_owner = 'Нет владельца'
     flat_info.added_by = flat_create_user.name
     return render_template('jasny/inspector/show_flat_info.html',
                            username=current_user.min_name(),
