@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from app import app # Точка входа в приложение Flask
+from app import app, db # Точка входа в приложение Flask
 from flask import session, render_template, redirect, url_for
 from flask_login import login_required, current_user
-from models import User, Counter, Pokaz # Модели и база данных
+from models import Address, House, Counter
 import utils
 
 # index page
@@ -26,36 +26,36 @@ def app_main():
         return redirect(url_for('admin_page'))
     if current_user.is_inspector():
         return redirect(url_for('inspector_index'))
-    counters = Counter.query.filter(Counter.owner == current_user.id).all()
-    counters_data = []
-    for c in counters:
-        pkz = Pokaz.query.filter(Pokaz.counter == c.id).order_by(Pokaz.id.desc()).first()
-        if pkz:
-            c.pokaz = pkz.pokaz
-        else:
-            c.pokaz = 0.0
-        c_data = [c.id,c.name,c.pokaz]
-        counters_data.append(c_data)
-    #Информация о месяцах
-    month_info = []
-    for m in range(1,12+1):
-        if(utils.now_month()-m > 1 or utils.now_month()-m < -1):
-            continue
-        data = {}
-        data['num'] = m
-        data['name'] = utils.month_name(m)
-        if m == utils.now_month():
-            data['now'] = 1
-        else:
-            data['now'] = 0
-        month_info.append(data)
-        
-    return render_template('jasny/user_index.html',
+
+    user_flats = db.session.query(Address.id,
+                                  Address.kv,
+                                  Address.house).filter_by(owner = current_user.id).all()
+    flats_data = list()
+    for f in user_flats:
+        flat_adress = '{} кв. {}'.format(db.session.query(House.adres).filter_by(id=f.house).limit(1).first().adres, f.kv)
+        meter_data = db.session.query(Counter.id, Counter.name, Counter.approved).filter_by(flat=f.id).all()
+        flat = dict(id=f.id, full_address=flat_adress, meters=meter_data)
+        flats_data.append(flat)
+
+    return render_template('jasny/user/user_index.html',
                            page_name='Главная',
-                           username = current_user.min_name(),
-                           cdata=counters_data,
-                           month_data=month_info)
+                           flat_data = flats_data,
+                           username = current_user.min_name())
+
     
-    
-    
-    
+@app.route('/app/meter/<int:id>')
+@login_required
+def app_user_meters(id):
+    if current_user.is_admin():
+        return redirect(url_for('admin_page'))
+    if current_user.is_inspector():
+        return redirect(url_for('inspector_index'))
+
+    meter = Counter.query.filter_by(id=id).limit(1).first()
+    flat_info = db.session.query(Address.house, Address.kv).filter_by(id=meter.flat).limit(1).first()
+    house = db.session.query(House.adres).filter_by(id=flat_info.house).limit(1).first()
+    return render_template('/jasny/user/meter_info.html',
+                           page_name='Прибор учета',
+                           username=current_user.min_name(),
+                           meter=meter,
+                           full_address = '{} кв. {}'.format(house.adres, flat_info.kv))
