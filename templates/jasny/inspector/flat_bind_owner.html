@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    {% with username=username,active=1 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+
+    <div class="container">
+        <h2>Выбор владельца квартиры <strong>{{ flat_address }}</strong></h2>
+        <form class="form-inline" method="post">
+            {{form.csrf_token}}
+            <label>Поиск пользователя по ФИО:&nbsp;</label>
+            {{form.name(class_='form-control', style='width:250px')}}
+            <button class="btn btn-success" type="submit" style="margin:5px;">Найти</button>
+        </form>
+
+        {% if no_result %}
+        <h4>Пользователи не найдены.</h4>
+        {%endif%}
+
+        {% if show_result %}
+        <div>
+            <h3>Результаты поиска:</h3>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-condensed">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">ID</th>
+                        <th style="width: 300px;">ФИО</th>
+                        <th style="width: 200px;">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for insp in data %}
+                    <tr>
+                        <td>{{ insp['id'] }}</td>
+                        <td>{{ insp['name'] }}</td>
+                        <td><a href="/inspector/flats/flat_bind?flat_id={{ flat_id }}&new_owner={{ insp['id'] }}" class="btn btn-primary btn-sm"
+                                role="button" style="margin-right: 5px;">Установить владельцем</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %} 
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+
+</body>
+
+</html>

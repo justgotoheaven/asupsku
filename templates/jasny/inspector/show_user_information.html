@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+<style>
+    @media print {
+
+        body {
+            visibility: hidden;
+        }
+        .user_card {
+            visibility: visible;
+        }
+    }
+</style>
+<body>
+    {% with username=username,active=1 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+    <div class="container">
+        {% if show_data %}
+        <h2>Пользователь <strong>{{ user.name }}</strong></h2>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Информация о пользователе</h3>
+            </div>
+            <div class="panel-body">
+                <p><strong>ID в системе: </strong>{{ user.id }}</p>
+                <p><strong>ФИО: </strong>{{ user.name }}</p>
+                <p><strong>Логин: </strong>{{ user.login }}</p>
+                <p><strong>E-mail: </strong>{{ user.email }}</p>
+                <p><strong>Дата регистрации: </strong>{{ user.created_on }}</p>
+                <p><strong>Кем зарегистрирован: </strong>{{ who_registered }}</p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">Изменение данных пользователя</h3>
+            </div>
+            <div class="panel-body">
+                <form method="post">
+                    {{ form.csrf_token }}
+                    <div class="form-group"><label class="control-label">Новый E-mail:&nbsp;</label>{{
+                        form.email(class_='form-control') }}</div>
+                    <div class="form-group"><label class="control-label">Новый пароль:&nbsp;</label>{{
+                        form.password(class_='form-control') }}</div>
+                    <button class="btn btn-primary" type="submit">Сохранить изменения</button>
+                </form>
+            </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-warning" role="alert" style="margin-top: 20px;">
+                <span>
+                    <strong>{{ message
+                        }}</strong>
+                </span>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+            {% if update %}
+            <div class="alert alert-danger">
+                <h4><strong>Обязательно сохраните новые данные пользователя: </strong></h4>
+                {% if update['email'] %}
+                <p style="font-size: 20px">Новый e-mail: <strong>{{ update['email'] }}</strong></p>
+                {%endif%}
+                {% if update['pass'] %}
+                <p style="font-size: 20px">Новый пароль: <strong>{{ update['pass'] }}</strong></p>
+                {%endif%}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
