@@ -54,13 +54,13 @@ class Address(db.Model):
     __tablename__ = 'addresses'
     id = db.Column(db.Integer(), primary_key=True)
     house = db.Column(db.Integer())
-    kv = db.Column(db.Integer(), unique=True)
+    kv = db.Column(db.Integer())
     owner = db.Column(db.Integer())
     registered_in = db.Column(db.Integer()) # Число зарегистрированных в квартире
     added_by = db.Column(db.Integer())
     added_on = db.Column(db.DateTime(), default=datetime.now)
-    changed_on = db.Column(db.Integer())
-    changed_by = db.Column(db.DateTime())
+    changed_on = db.Column(db.DateTime())
+    changed_by = db.Column(db.Integer())
 
     owner_name = None
 
