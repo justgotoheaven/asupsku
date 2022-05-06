@@ -91,12 +91,14 @@ class Pokaz(db.Model):
     __tablename__ = 'pokaz'
     id = db.Column(db.Integer(), primary_key=True)
     counter = db.Column(db.Integer(), nullable=False)
-    pokaz = db.Column(db.Float())
-    date = db.Column(db.Date())
-    month = db.Column(db.Integer())
-    year = db.Column(db.Integer())
-    person = db.Column(db.Integer())
-    type = db.Column(db.Integer())
+    added_by = db.Column(db.Integer())
+    added_on = db.Column(db.DateTime(), default=datetime.now)
+    approved = db.Column(db.Boolean())
+    approved_by = db.Column(db.Integer())
+    approved_on = db.Column(db.DateTime())
+    amount = db.Column(db.Float())
+    p_month = db.Column(db.Integer())
+    p_year = db.Column(db.Integer())
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.pokaz)
