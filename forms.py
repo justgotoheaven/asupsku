@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField, IntegerField, SelectField, \
-    DateField, BooleanField
+    DateField, BooleanField, FloatField, FieldList, FormField
 from wtforms.validators import DataRequired, Length
 
 
@@ -83,3 +83,13 @@ class AddMeterForm(FlaskForm):
 
 class ShowFlatsFilterHouseForm(FlaskForm):
     house = SelectField(validators=[DataRequired()], name='house')
+
+
+class SetPokazCountersForm(FlaskForm):
+    counter = HiddenField()
+    counter_name = HiddenField()
+    pokaz = FloatField()
+
+
+class SetPokazForm(FlaskForm):
+    counters = FieldList(FormField(SetPokazCountersForm))

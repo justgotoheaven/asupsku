@@ -3,7 +3,7 @@ from app import app, db # Точка входа в приложение Flask
 from flask import session, render_template, redirect, url_for
 from flask_login import login_required, current_user
 from models import Address, House, Counter
-import utils
+from forms import SetPokazForm
 
 # index page
 @app.route('/')
@@ -59,3 +59,26 @@ def app_user_meters(id):
                            username=current_user.min_name(),
                            meter=meter,
                            full_address = '{} кв. {}'.format(house.adres, flat_info.kv))
+
+
+@app.route('/app/pokaz/<int:kvid>')
+@login_required
+def app_user_meters_addpokaz(kvid):
+    if current_user.is_admin():
+        return redirect(url_for('admin_page'))
+    if current_user.is_inspector():
+        return redirect(url_for('inspector_index'))
+
+    house = db.session.query(Address.house, Address.kv).filter_by(id=kvid).limit(1).first()
+    house_adr = db.session.query(House.adres).filter_by(id=house.house).limit(1).first()
+    meters = db.session.query(Counter.id, Counter.name).filter_by(flat=kvid).all()
+    meters_form_data = list()
+    for m in meters:
+        m_info = dict(counter_name=m.name, counter=m.id)
+        meters_form_data.append(m_info)
+    form = SetPokazForm(counters=meters_form_data)
+    return render_template('/jasny/user/add_pkz.html',
+                           pagename='Передача показаний',
+                           username=current_user.min_name(),
+                           form=form,
+                           full_address='{} кв. {}'.format(house_adr.adres, house.kv))
