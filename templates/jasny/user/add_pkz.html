@@ -26,7 +26,7 @@
         <div class="row">
             <div class="col-md-6">
                 <form class="form-horizontal" method="post">
-                    <div class="form-group">
+                    <!--<div class="form-group">
                         <label class="col-xs-3 control-label">Период:&nbsp;</label>
                         <div class="col-xs-9">
                             <select class="form-control">
@@ -36,18 +36,35 @@
                             </select>
                         </div>
                     </div>
+                -->
                     <p><em>В полях ввода показаний указаны текущие показания приборов учета</em></p>
+                    <div class="alert alert-warning">
+                        <p>Неповеренные приборы учета не отображаются.</p>
+                    </div>
                     {% for form_entry in form.counters %}
                     <div class="form-group">
 
                         {{ form_entry.hidden_tag() }}
                         <label class="col-xs-3 control-label">{{ form_entry.counter_name.data }}</label>
-                        <div class="col-xs-9">{{ form_entry.pokaz(class_='form-control')}}</div>
+                        <div class="col-xs-9">
+                            {% with pkz_cur = form_entry.pokaz_current.data %}
+                            {{ form_entry.pokaz(class_='form-control', placeholder=pkz_cur) }} 
+                            {%endwith%}
+                            </div>
 
 
                     </div>
                     {%endfor%}
+                    <button class="btn btn-success" type="submit">Передать показания</button>
                 </form>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="{{ category }}" style="margin-top: 20px;"><span><strong>{{ message
+                            }}</strong><br></span></div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
             </div>
         </div>
 
