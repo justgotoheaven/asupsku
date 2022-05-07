@@ -7,6 +7,7 @@ import string
 from utils import generate_password
 from transliterate import translit
 from random import randint
+from mailer import send_welcome
 
 
 @app.route('/inspector/users', methods=['POST', 'GET'])
@@ -69,6 +70,11 @@ def inspector_users_add():
                 flash('Пользователь {0} успешно зарегистрирован в системе'.format(add_form.user_name.data))
                 user_for_card = new_user
                 user_for_card.password_hash = user_password
+                try:
+                    send_welcome(add_form.user_name.data, username_string, user_password, add_form.email.data, insp=False)
+                    flash('Учетные данные пользователя отправлена на email {}'.format(add_form.email.data))
+                except:
+                    flash('Ошибка отправки учетных данных пользователя на email!')
             except Exception as e:
                 db.session.rollback()
                 flash('Ошибка создания пользователя<br>Техническая информация:<br>{}'.format(e))

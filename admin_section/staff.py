@@ -13,6 +13,7 @@ from forms import AddInspectorForm, FindInspectorForm, ChangeInspectorEmailAndPa
 from transliterate import translit
 from random import randint
 from utils import generate_password
+from mailer import send_welcome
 import string
 
 # Раздел работы с пользователями
@@ -168,9 +169,16 @@ def admin_add_inspector():
         try:
             db.session.add(new_user)
             db.session.commit()
+
+
             flash('Инспектор {0} создан успешно\n\nЛогин: {1}\nПароль: {2}'.format(add_form.insp_name.data,
                                                                                 insp_username,
                                                                                 user_password))
+            try:
+                send_welcome(add_form.insp_name.data, insp_username, user_password, add_form.insp_email.data, insp=True)
+                flash('Информация об учетных данных и порядке входа направлена на email {}'.format(add_form.insp_email.data))
+            except:
+                flash('Ошибка отправки учетных данных по эл.почте.')
             return render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
                                    username=current_user.min_name(),
                                    form=add_form)
