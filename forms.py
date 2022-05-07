@@ -89,7 +89,8 @@ class SetPokazCountersForm(FlaskForm):
     counter = HiddenField()
     counter_name = HiddenField()
     pokaz = FloatField()
-
+    pokaz_current = HiddenField()
 
 class SetPokazForm(FlaskForm):
     counters = FieldList(FormField(SetPokazCountersForm))
+    #period = SelectField(validators=[DataRequired()],name='pkz_period')
