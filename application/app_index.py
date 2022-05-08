@@ -4,6 +4,8 @@ from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
 from models import Address, House, Counter, Pokaz
 from forms import SetPokazForm
+from application.pokaz_utils import clear_exists_pkz
+from utils import cur_year, get_period
 
 # index page
 @app.route('/')
@@ -31,15 +33,23 @@ def app_main():
                                   Address.kv,
                                   Address.house).filter_by(owner = current_user.id).all()
     flats_data = list()
+    meters_pkz = dict()
     for f in user_flats:
         flat_adress = '{} кв. {}'.format(db.session.query(House.adres).filter_by(id=f.house).limit(1).first().adres, f.kv)
         meter_data = db.session.query(Counter.id, Counter.name, Counter.approved).filter_by(flat=f.id).all()
+        for c in meter_data:
+            c_pkz_data = db.session.query(Pokaz.amount).filter_by(counter=c.id).order_by(Pokaz.id.desc()).limit(1).first()
+            if c_pkz_data:
+                meters_pkz[c.id] = c_pkz_data.amount
+            else:
+                meters_pkz[c.id] = 'Нет данных'
         flat = dict(id=f.id, full_address=flat_adress, meters=meter_data)
         flats_data.append(flat)
 
     return render_template('jasny/user/user_index.html',
                            page_name='Главная',
                            flat_data = flats_data,
+                           m_pkz = meters_pkz,
                            username = current_user.min_name())
 
     
@@ -95,9 +105,12 @@ def app_user_meters_addpokaz(kvid):
         for pkz in data:
             if pkz['pokaz'] is None:
                 continue
+            clear_exists_pkz(pkz['counter'], get_period(), cur_year())
             pkz_to_save = Pokaz(counter=pkz['counter'],
                                 amount=pkz['pokaz'],
-                                added_by=current_user.id)
+                                added_by=current_user.id,
+                                p_month=get_period(),
+                                p_year=cur_year())
             try:
                 db.session.add(pkz_to_save)
                 db.session.commit()
