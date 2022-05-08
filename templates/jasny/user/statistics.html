@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    {% with username=username,active=2 %}
+    {% include "jasny/user/nav.html" %}
+    {% endwith %}
+
+    <div class="container">
+        <h2>Статистика по приборам учета</h2>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <form method="post" class="form-horizontal">
+                    {{ form.csrf_token }}
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">Квартира:</label>
+                        <div class="col-xs-8">{{ form.flats(class_='form-control') }}</div>
+                        <div class="col-xs-2"><button type="submit" class="btn btn-success">Выбрать</button></div>
+                        
+                    </div>
+                </form>
+                {% if meters_form %}
+                <form method="get" class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">Счетчик:</label>
+                        <div class="col-xs-8">{{ meters_form.meters(class_='form-control') }}</div>
+                        <div class="col-xs-2"><button type="submit" class="btn btn-success">Выбрать</button></div>
+                        
+                    </div>
+                </form>
+                {%endif%}
+                <hr>
+                {% if show_chart %}
+                <div class="panel panel-info">
+                    <div class="panel-heading">График потребления прибора учета <strong>{{ meter_name }}</strong></div>
+                    <div class="panel-body">
+                        <canvas id="pkz_chart"></canvas>
+                    </div>
+                </div>
+                {%endif%}
+            </div>
+            
+        </div>
+    </div>
+    {% with periods=periods, pokaz=pokaz %}
+    {% include "jasny/user/chart_set_script.html" %}
+    {% endwith %}
+    <script>
+        const myChart = new Chart(
+          document.getElementById('pkz_chart'),
+          config
+        );
+      </script>
+    
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+    <script src="/static/js/app.js"></script>
+
+  </body>
+</html>

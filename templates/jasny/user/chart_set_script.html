@@ -1,0 +1,30 @@
+<script>
+    const labels = [
+      {%for p in periods%}
+      '{{ p }}',
+      {%endfor%}
+    ];
+  
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Показания',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        pointStyle: 'circle',
+      pointRadius: 5,
+      pointHoverRadius: 15, 
+        data: [{%for pkz in pokaz %}
+            {{ pkz }},
+            {%endfor%}
+        ],
+      }]
+    };
+  
+    const config = {
+        
+      type: 'line',
+      data: data,
+      options: {}
+    };
+  </script>
