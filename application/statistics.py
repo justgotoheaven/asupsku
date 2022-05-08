@@ -47,6 +47,27 @@ def stats_main_page():
                 continue
             pokaz_periods_names.append('{} {}'.format(month_name(int(pkz.p_month)), pkz.p_year))
             pokaz_full_data.append(pkz.amount)
+        # Средние показатели
+        if len(pokaz_full_data) > 1:
+            i = 0
+            average_pkz = list()
+            average_periods = list()
+            while i < len(pokaz_full_data)-1:
+                average = (pokaz_full_data[i] + pokaz_full_data[i+1])/2
+                average_period = '{} - {}'.format(pokaz_periods_names[i],pokaz_periods_names[i+1])
+                average_pkz.append(average)
+                average_periods.append(average_period)
+                i = i+1
+            return render_template('/jasny/user/statistics.html',
+                                   form=search_form,
+                                   show_chart=True,
+                                   meter_name=counter_name,
+                                   periods=pokaz_periods_names,
+                                   pokaz=pokaz_full_data,
+                                   avg_periods=average_periods,
+                                   avg_pokaz=average_pkz,
+                                   page_name='Статистика',
+                                   username=current_user.min_name())
         return render_template('/jasny/user/statistics.html',
                                form=search_form,
                                show_chart=True,

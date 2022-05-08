@@ -44,7 +44,12 @@
                 </form>
                 {%endif%}
                 <hr>
-                {% if show_chart %}
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    {% if show_chart %}
                 <div class="panel panel-info">
                     <div class="panel-heading">График потребления прибора учета <strong>{{ meter_name }}</strong></div>
                     <div class="panel-body">
@@ -52,18 +57,34 @@
                     </div>
                 </div>
                 {%endif%}
+                </div>
+                <div class="col-md-6">
+                    {% if avg_pokaz %}
+                    <div class="panel panel-info">
+                        <div class="panel-heading">График среднемесячных показаний прибора учета <strong>{{ meter_name }}</strong></div>
+                        <div class="panel-body">
+                            <canvas id="pkz_chart_avg"></canvas>
+                        </div>
+                    </div>
+                    {%endif%}
+                </div>
             </div>
-            
         </div>
     </div>
     {% with periods=periods, pokaz=pokaz %}
     {% include "jasny/user/chart_set_script.html" %}
     {% endwith %}
     <script>
-        const myChart = new Chart(
+        const pkzChart = new Chart(
           document.getElementById('pkz_chart'),
           config
         );
+        {% if avg_pokaz %}
+        const avgPkzChart = new Chart(
+          document.getElementById('pkz_chart_avg'),
+          config_avg
+        );
+        {% endif %}
       </script>
     
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
