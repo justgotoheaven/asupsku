@@ -49,7 +49,7 @@
                                 {%else%}
                                 <td><a href="/app/meter/{{ m.id }}">{{ m.name }}</a> <span class="label label-danger">Не поверен</span></td>
                                 {%endif%}
-                                <td>test</td>
+                                <td>{{ m_pkz[m.id] }}</td>
                             </tr>
                             {%endfor%}
                         </tbody>

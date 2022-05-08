@@ -1,5 +1,5 @@
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-    <a class="navmenu-brand visible-md visible-lg" href="#">Система учета показаний</a>
+    <a class="navmenu-brand visible-md visible-lg" href="/app">Система учета показаний</a>
     <ul class="nav navmenu-nav">
         {% if active == 1 %}
         <li class="active">
@@ -8,7 +8,7 @@
         {% if active == 2 %}
         <li class="active">
             {% else %}
-        <li>{%endif%}<a href="#">Отчеты и статистика</a></li>
+        <li>{%endif%}<a href="/app/stats">Отчеты и статистика</a></li>
         {% if active == 3 %}
         <li class="active">
             {% else %}

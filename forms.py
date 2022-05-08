@@ -94,3 +94,9 @@ class SetPokazCountersForm(FlaskForm):
 class SetPokazForm(FlaskForm):
     counters = FieldList(FormField(SetPokazCountersForm))
     #period = SelectField(validators=[DataRequired()],name='pkz_period')
+
+class SelectFlatForStats(FlaskForm):
+    flats = SelectField(validators=[DataRequired()],name='select_flats_stats')
+
+class SelectMeterForStats(FlaskForm):
+    meters = SelectField(validators=[DataRequired()],name='meter_id')

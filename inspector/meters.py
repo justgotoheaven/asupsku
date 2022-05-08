@@ -31,7 +31,7 @@ def inspector_meters_add():
                                 setup_date=add_form.setup_date.data,
                                 setup_on=add_form.setup_on.data,
                                 approved=approved_state,
-                                approve_date=add_form.approve_date.data,
+                                approve_date=add_form.approve_date.raw_data[0],
                                 next_approve_date=add_form.next_approve_date.data,
                                 serial_num=add_form.serial_num.data)
             try:
