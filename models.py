@@ -114,3 +114,18 @@ class Categories(db.Model):
     cost = db.Column(db.Float())
     cost_changed_on = db.Column(db.DateTime())
     cost_changed_by = db.Column(db.Integer())
+
+
+class Appeal(db.Model):
+    __tablename__ = 'appeals'
+    id = db.Column(db.Integer(), primary_key=True)
+    category = db.Column(db.Integer(), nullable=False)
+    created_by = db.Column(db.Integer(), nullable=False)
+    created_on = db.Column(db.DateTime(), default=datetime.now)
+    subject = db.Column(db.String(256))
+    text = db.Column(db.Text())
+    answered = db.Column(db.Boolean(), default=False)
+    answered_by = db.Column(db.Integer())
+    answered_on = db.Column(db.DateTime())
+    answer_text = db.Column(db.Text())
+    closed = db.Column(db.Boolean())
