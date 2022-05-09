@@ -25,18 +25,8 @@
         <h4>Адрес: {{ full_address }}</h4>
         <div class="row">
             <div class="col-md-6">
+                <div class="alert alert-info">Текущий период: <strong>{{ period }}</strong></div>
                 <form class="form-horizontal" method="post">
-                    <div class="form-group">
-                        <label class="col-xs-3 control-label">Период:&nbsp;</label>
-                        <div class="col-xs-9">
-                            <select class="form-control">
-                                <option value="12" selected="">This is item 1</option>
-                                <option value="13">This is item 2</option>
-                                <option value="14">This is item 3</option>
-                            </select>
-                        </div>
-                    </div>
-                
                     <p><em>В полях ввода показаний указаны текущие показания приборов учета</em></p>
                     <div class="alert alert-warning">
                         <p>Неповеренные приборы учета не отображаются.</p>

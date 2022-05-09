@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from models import Address, House, Counter, Pokaz
 from forms import SetPokazForm
 from application.pokaz_utils import clear_exists_pkz
-from utils import cur_year, get_period
+from utils import cur_year, get_period, month_name
 
 # index page
 @app.route('/')
@@ -121,5 +121,6 @@ def app_user_meters_addpokaz(kvid):
     return render_template('/jasny/user/add_pkz.html',
                            pagename='Передача показаний',
                            username=current_user.min_name(),
+                           period = '{} {}'.format(month_name(get_period()), cur_year()),
                            form=form,
                            full_address='{} кв. {}'.format(house_adr.adres, house.kv))
