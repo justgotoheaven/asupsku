@@ -1,5 +1,3 @@
-import datetime
-
 from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
