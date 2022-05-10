@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField, IntegerField, SelectField, \
-    DateField, BooleanField, FloatField, FieldList, FormField
+    DateField, BooleanField, FloatField, FieldList, FormField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email
 
 
@@ -24,7 +24,6 @@ class AddUserForm(FlaskForm):
     tel = StringField(name='user_tel')
 
 
-
 class FindInspectorForm(FlaskForm):
     name = StringField(validators=[DataRequired(), Length(min=3)], id="name",
                        render_kw={'placeholder': 'Введите имя...'})
@@ -42,7 +41,9 @@ class ChangeInspectorEmailAndPassword(FlaskForm):
 
 class ChangeUserEmailAndPassword(FlaskForm):
     email = EmailField(id="new_user_email", render_kw={'placeholder': 'Введите новый E-mail...'})
-    password = StringField(id="new_user_password", validators=[Length(min=8)], render_kw={'placeholder': 'Введите новый пароль...'})
+    password = StringField(id="new_user_password", validators=[Length(min=8)],
+                           render_kw={'placeholder': 'Введите новый пароль...'})
+
 
 class DeleteInspector(FlaskForm):
     submit = SubmitField(label='Да, удалить инспектора')
@@ -91,12 +92,24 @@ class SetPokazCountersForm(FlaskForm):
     pokaz = FloatField()
     pokaz_current = HiddenField()
 
+
 class SetPokazForm(FlaskForm):
     counters = FieldList(FormField(SetPokazCountersForm))
-    #period = SelectField(validators=[DataRequired()],name='pkz_period')
+    # period = SelectField(validators=[DataRequired()],name='pkz_period')
+
 
 class SelectFlatForStats(FlaskForm):
-    flats = SelectField(validators=[DataRequired()],name='select_flats_stats')
+    flats = SelectField(validators=[DataRequired()], name='select_flats_stats')
+
 
 class SelectMeterForStats(FlaskForm):
-    meters = SelectField(validators=[DataRequired()],name='meter_id')
+    meters = SelectField(validators=[DataRequired()], name='meter_id')
+
+
+class AppealsCreate(FlaskForm):
+    subject = StringField(validators=[DataRequired(), Length(min=5)], name='appeal_subject')
+    text = TextAreaField(validators=[DataRequired(), Length(min=10)], name='appeal_text')
+
+
+class AppealsAnswer(FlaskForm):
+    answer = TextAreaField(validators=[DataRequired(), Length(min=10)], name='appeal_answer')
