@@ -35,8 +35,10 @@
                 <label>Заводской номер:&nbsp;</label>{{ form.serial_num(class_='form-control') }}
                 <label>Дата установки:&nbsp;</label>{{ form.setup_date(class_='form-control') }}
                 <label>Место установки:&nbsp;</label>{{ form.setup_on(class_='form-control') }}
-                <label>Дата поверки:&nbsp;</label><em>Оставьте поле пустым, если счетчик не поверен!</em>{{ form.approve_date(class_='form-control') }}
+                <p>Данные о поверке прибора учета. Оставьте эти поля пустыми, если прибор учета не поверен.</p>
+                <label>Дата поверки:&nbsp;</label>{{ form.approve_date(class_='form-control') }}
                 <label>Дата следующей поверки:&nbsp;</label>{{ form.next_approve_date(class_='form-control') }}
+                <label>Документ-основание поверки:</label>{{ form.approve_doc(class_='form-control') }}
                 {{ form.flat_id }}
                 <button class="btn btn-default" type="submit" style="margin-top:25px;">Зарегистрировать прибор учета</button>
                 {% with messages = get_flashed_messages() %}

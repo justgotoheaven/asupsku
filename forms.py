@@ -79,6 +79,7 @@ class AddMeterForm(FlaskForm):
 
     approve_date = DateField(name='meter_approve_date')
     next_approve_date = DateField(name='meter_next_approve_date')
+    approve_doc = StringField(name='meter_approve_document')
     flat_id = HiddenField(name='meter_flat')
 
 
@@ -113,3 +114,9 @@ class AppealsCreate(FlaskForm):
 
 class AppealsAnswer(FlaskForm):
     answer = TextAreaField(validators=[DataRequired(), Length(min=10)], name='appeal_answer')
+
+
+class ApproveMeterForm(FlaskForm):
+    approve_date = DateField(validators=[DataRequired()],name='meter_approve_date')
+    next_approve_date = DateField(validators=[DataRequired()],name='meter_next_approve_date')
+    approve_doc = StringField(validators=[DataRequired()],name='meter_approve_doc')

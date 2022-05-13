@@ -82,6 +82,7 @@ class Counter(db.Model):
     next_approve_date = db.Column(db.Date())
     serial_num = db.Column(db.String(100))
     flat = db.Column(db.Integer(), nullable=False)
+    approve_document = db.Column(db.String(256))
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.name)

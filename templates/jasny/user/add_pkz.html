@@ -26,6 +26,11 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="alert alert-info">Текущий период: <strong>{{ period }}</strong></div>
+                {% if no_meters %}
+                <div class="alert alert-danger">
+                    В данной квартире не зарегистрировано ни одного прибора учета.
+                </div>
+                {%else%}
                 <form class="form-horizontal" method="post">
                     <p><em>В полях ввода показаний указаны текущие показания приборов учета</em></p>
                     <div class="alert alert-warning">
@@ -55,6 +60,7 @@
                 {% endfor %}
                 {% endif %}
                 {% endwith %}
+                {%endif%}
             </div>
         </div>
 
