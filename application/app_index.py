@@ -87,6 +87,9 @@ def app_user_meters_addpokaz(kvid):
     house = db.session.query(Address.house, Address.kv).filter_by(id=kvid).limit(1).first()
     house_adr = db.session.query(House.adres).filter_by(id=house.house).limit(1).first()
     meters = db.session.query(Counter.id, Counter.name, Counter.approved).filter_by(flat=kvid).all()
+    no_meters = False
+    if not meters:
+        no_meters = True
     meters_form_data = list()
     for m in meters:
         m_info = dict(counter_name=m.name, counter=m.id)
@@ -105,22 +108,28 @@ def app_user_meters_addpokaz(kvid):
         for pkz in data:
             if pkz['pokaz'] is None:
                 continue
-            clear_exists_pkz(pkz['counter'], get_period(), cur_year())
-            pkz_to_save = Pokaz(counter=pkz['counter'],
-                                amount=pkz['pokaz'],
-                                added_by=current_user.id,
-                                p_month=get_period(),
-                                p_year=cur_year())
-            try:
-                db.session.add(pkz_to_save)
-                db.session.commit()
-                flash('Показания счетчика {} успешно переданы!'.format(pkz['counter_name']), 'alert alert-success')
-            except Exception as e:
-                db.session.rollback()
-                flash('Ошибка при передачи показаний счетчика {}. Техническая информация: {}'.format(pkz['counter_name'], e), 'alert alert-danger')
+            current_pkz = db.session.query(Pokaz.amount).filter_by(counter=pkz['counter']).order_by(Pokaz.id.desc()).limit(1).first()
+            if current_pkz is not None and pkz['pokaz'] < current_pkz.amount:
+                flash('Введенные показания для счетчика {} некорректны!'.format(pkz['counter_name']),
+                      'alert alert-danger')
+            else:
+                clear_exists_pkz(pkz['counter'], get_period(), cur_year())
+                pkz_to_save = Pokaz(counter=pkz['counter'],
+                                    amount=pkz['pokaz'],
+                                    added_by=current_user.id,
+                                    p_month=get_period(),
+                                    p_year=cur_year())
+                try:
+                    db.session.add(pkz_to_save)
+                    db.session.commit()
+                    flash('Показания счетчика {} успешно переданы!'.format(pkz['counter_name']), 'alert alert-success')
+                except Exception as e:
+                    db.session.rollback()
+                    flash('Ошибка при передачи показаний счетчика {}. Техническая информация: {}'.format(pkz['counter_name'], e), 'alert alert-danger')
     return render_template('/jasny/user/add_pkz.html',
-                           pagename='Передача показаний',
+                           page_name='Передача показаний',
                            username=current_user.min_name(),
+                           no_meters = no_meters,
                            period = '{} {}'.format(month_name(get_period()), cur_year()),
                            form=form,
                            full_address='{} кв. {}'.format(house_adr.adres, house.kv))
