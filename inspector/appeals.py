@@ -11,6 +11,19 @@ def inspector_appeals_mainpage():
     if not current_user.is_inspector():
         return Response(status=403)
 
+    if request.method == 'GET' and request.args.get('archive') is not None:
+
+        ap_archive = Appeal.query.filter_by(answered=True).order_by(Appeal.id.desc()).all()
+        appeals_crnames = dict()
+        for p in ap_archive:
+            created_by_name = db.session.query(User.name).filter_by(id=p.created_by).limit(1).first()
+            appeals_crnames[p.id] = created_by_name.name
+        return render_template('jasny/inspector/appeals_archive.html',
+                               page_name='Архив обращений',
+                               username=current_user.min_name(),
+                               appeals=ap_archive,
+                               a_crnames=appeals_crnames)
+
     pending_appeals = db.session.query(Appeal.id,
                                        Appeal.created_by,
                                        Appeal.created_on,
