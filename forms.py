@@ -120,3 +120,7 @@ class ApproveMeterForm(FlaskForm):
     approve_date = DateField(validators=[DataRequired()],name='meter_approve_date')
     next_approve_date = DateField(validators=[DataRequired()],name='meter_next_approve_date')
     approve_doc = StringField(validators=[DataRequired()],name='meter_approve_doc')
+
+
+class ChangeCostForm(FlaskForm):
+    new_cost = FloatField(validators=[DataRequired()],name='cat_new_cost')

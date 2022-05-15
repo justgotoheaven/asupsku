@@ -116,6 +116,15 @@ class Categories(db.Model):
     cost_changed_on = db.Column(db.DateTime())
     cost_changed_by = db.Column(db.Integer())
 
+    @classmethod
+    def get_changer_name(self):
+        cost_ch = self.cost_changed_by
+        user = db.session.query(User.name).filter_by(id=cost_ch).limit(1).first()
+        if not user:
+            return 'Неизвестно'
+        else:
+            return user.name
+
 
 class Appeal(db.Model):
     __tablename__ = 'appeals'
