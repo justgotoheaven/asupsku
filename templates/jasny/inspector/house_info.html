@@ -37,25 +37,25 @@
                 <p><strong>Кем добавлен: </strong>{{ house['added_by'] }}</p>
             </div>
         </div>
-        {% if show_flats %}
+        {% if show_residents %}
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Список зарегистрированных квартир</h3>
+                <h3 class="panel-title">Список жильцов многоквартирного дома</h3>
             </div>
             <div class="panel-body">
                 <div class="table-responsive">
                     <table class="table table-bordered table-condensed">
                         <thead>
                             <tr>
-                                <th>N квартиры</th>
-                                <th>Владелец</th>
+                                <th>Квартира</th>
+                                <th>ФИО</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for flat in flats %}
+                            {% for user in residents %}
                             <tr>
-                                <td>{{ flat.kv }}</td>
-                                <td>{{ flat.owner }}</td>
+                                <td>{{ user['kv']}}</td>
+                                <td><a href="/inspector/users/show/{{ user['id'] }}">{{ user['name'] }}</a></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -66,10 +66,10 @@
         {% endif %}
 
         <a class="btn btn-info" role="button" href="/inspector/houses">Вернуться к списку МКД</a>
-        {% if show_flats %}
-        <a class="btn btn-primary" role="button" href="/inspector/houses/{{ house['id'] }}">Скрыть список квартир</a>
+        {% if show_residents %}
+        <a class="btn btn-primary" role="button" href="/inspector/houses/{{ house['id'] }}">Скрыть список жильцов</a>
         {% else %}
-        <a class="btn btn-primary" role="button" href="/inspector/houses/{{ house['id'] }}?show_flats=1">Показать список квартир</a>
+        <a class="btn btn-primary" role="button" href="/inspector/houses/{{ house['id'] }}?show_residents=1">Показать список жильцов</a>
         {% endif %}
         {% endif %}
     </div>

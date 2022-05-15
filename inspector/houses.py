@@ -77,15 +77,23 @@ def inspector_houses_info(id):
     else:
         house['added_by'] = 'Неизвестно'
 
-    if request.args.get('show_flats') is not None:
-        mkd_flat = db.session.query(Address.kv, Address.owner).filter_by(house=id).all()
+    if request.args.get('show_residents') is not None:
+        mkd_flat_residents = db.session.query(Address.owner,Address.kv).filter_by(house=id).order_by(Address.kv.asc()).all()
+        users = list()
+        for flat in mkd_flat_residents:
+            if flat.owner is None:
+                continue
+            u_info = db.session.query(User.name).filter_by(id=flat.owner).limit(1).first()
+            u_kv = flat.kv
+            u_data = dict(id=flat.owner,name=u_info.name,kv=u_kv)
+            users.append(u_data)
         return render_template('jasny/inspector/house_info.html',
                                page_name='Информация о МКД',
                                username=current_user.min_name(),
                                show_data=True,
                                house=house,
-                               show_flats=True,
-                               flats=mkd_flat)
+                               show_residents=True,
+                               residents=users)
 
     return render_template('jasny/inspector/house_info.html',
                            page_name='Информация о МКД',
