@@ -2,7 +2,7 @@
 from app import app, db # Точка входа в приложение Flask
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_required, current_user
-from models import Address, House, Counter, Pokaz
+from models import Address, House, Counter, Pokaz, Categories
 from forms import SetPokazForm
 from application.pokaz_utils import clear_exists_pkz
 from utils import cur_year, get_period, month_name
@@ -86,13 +86,14 @@ def app_user_meters_addpokaz(kvid):
 
     house = db.session.query(Address.house, Address.kv).filter_by(id=kvid).limit(1).first()
     house_adr = db.session.query(House.adres).filter_by(id=house.house).limit(1).first()
-    meters = db.session.query(Counter.id, Counter.name, Counter.approved).filter_by(flat=kvid).all()
+    meters = db.session.query(Counter.id, Counter.name, Counter.approved, Counter.category).filter_by(flat=kvid).all()
     no_meters = False
     if not meters:
         no_meters = True
     meters_form_data = list()
     for m in meters:
-        m_info = dict(counter_name=m.name, counter=m.id)
+        m_cost = db.session.query(Categories.cost).filter_by(id=m.category).limit(1).first().cost
+        m_info = dict(counter_name=m.name, counter=m.id, cost=m_cost)
         if m.approved:
             pokaz = db.session.query(Pokaz.amount).filter_by(counter=m.id).order_by(Pokaz.id.desc()).limit(1).first()
             if pokaz is None:

@@ -45,9 +45,8 @@
                             {% with pkz_cur = form_entry.pokaz_current.data %}
                             {{ form_entry.pokaz(class_='form-control', placeholder=pkz_cur) }} 
                             {%endwith%}
-                            </div>
-
-
+                        </div>
+                        <div id="{{ form_entry.pokaz.id }}-cost"></div>
                     </div>
                     {%endfor%}
                     <button class="btn btn-success" type="submit">Передать показания</button>
@@ -69,7 +68,17 @@
     <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
-    <script src="/static/js/app.js"></script>
+    <script>
+        {% for form_entry in form.counters %}
+        $("#{{ form_entry.pokaz.id }}").on('input', function() {
+            var input_elem = $("#{{ form_entry.pokaz.id }}");
+            var current_pkz = input_elem.attr('placeholder');
+            var razn = input_elem.val() - current_pkz;
+            var cost = razn * $("#{{ form_entry.cost.id }}").val();
+            $("#{{ form_entry.pokaz.id }}-cost").html('Стоимость услуги: '+cost.toFixed(2)+'<br>Тариф: '+$("#{{ form_entry.cost.id }}").val());
+        });
+        {%endfor%}
+    </script>
 
 </body>
 
