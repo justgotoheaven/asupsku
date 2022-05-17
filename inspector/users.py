@@ -71,7 +71,7 @@ def inspector_users_add():
                 user_for_card = new_user
                 user_for_card.password_hash = user_password
                 try:
-                    send_welcome(add_form.user_name.data, username_string, user_password, add_form.email.data, insp=False)
+                    send_welcome(add_form.user_name.data, username, user_password, add_form.email.data, insp=False)
                     flash('Учетные данные пользователя отправлена на email {}'.format(add_form.email.data))
                 except:
                     flash('Ошибка отправки учетных данных пользователя на email!')
