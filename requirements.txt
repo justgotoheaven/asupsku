@@ -12,3 +12,4 @@ SQLAlchemy
 pymysql
 transliterate
 email_validator
+openpyxl
