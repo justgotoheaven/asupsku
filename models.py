@@ -68,6 +68,13 @@ class Address(db.Model):
         self.changed_by = user
         self.changed_on = datetime.now
 
+    def get_full_address(self):
+        house = db.session.query(House.adres).filter_by(id=self.house).limit(1).first()
+        if not house:
+            return False
+        adr = '{} кв. {}'.format(house.adres, self.kv)
+        return adr
+
 
 
 class Counter(db.Model):
