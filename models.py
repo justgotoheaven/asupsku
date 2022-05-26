@@ -75,6 +75,13 @@ class Address(db.Model):
         adr = '{} кв. {}'.format(house.adres, self.kv)
         return adr
 
+    def get_owner_name(self):
+        owner = db.session.query(User.name).filter_by(id=self.owner).limit(1).first()
+        if not owner:
+            return 'Неизвестно'
+        else:
+            return owner.name
+
 
 
 class Counter(db.Model):

@@ -1,8 +1,9 @@
 from app import app, db
-from flask import Response, render_template, request, flash
+from flask import Response, render_template, request, flash, send_file
 from flask_login import current_user, login_required
-from models import Categories, House, Address, Counter
-from forms import AddMeterForm, ApproveMeterForm
+from models import Categories, House, Address, Counter, User
+from forms import AddMeterForm, ApproveMeterForm, ShowFlatsFilterHouseForm, SelectPeriodForm
+from inspector.data_unload import DataUploader
 
 @app.route('/inspector/meters/add',methods=['GET', 'POST'])
 @login_required
@@ -121,3 +122,55 @@ def inspector_meters_approve(id):
                            address=address,
                            counter=c_info,
                            form=approve_form)
+
+@app.route('/inspector/meters/unload', methods=['GET','POST'])
+@login_required
+def inspector_meters_unload_pkz():
+    if not current_user.is_inspector():
+        return Response(status=403)
+    if request.args.get('type') is None:
+        return Response(status=400)
+    type = int(request.args.get('type'))
+    if type == 2:
+        filter_form = ShowFlatsFilterHouseForm()
+        all_houses = db.session.query(House.id, House.adres).all()
+        filter_form.house.choices = [(h.id, h.adres) for h in all_houses]
+        show_list = False
+        flats = None
+        if filter_form.validate_on_submit():
+            house_filter = filter_form.house.data
+            show_list = True
+            flats = Address.query.filter_by(house=house_filter).all()
+        return render_template('jasny/inspector/pokaz_unloading_flat.html',
+                               username=current_user.min_name(),
+                               page_name='Выгрузка показаний',
+                               form=filter_form,
+                               show_list=show_list,
+                               flats=flats)
+    else:
+        return Response(status=400)
+
+
+@app.route('/inspector/meters/unload_kv', methods=['GET','POST'])
+@login_required
+def inspector_meters_unload_pkz_kv():
+    if not current_user.is_inspector():
+        return Response(status=403)
+    if request.args.get('kv') is None:
+        return Response(status=400)
+    flat_id = int(request.args.get('kv'))
+    flat = Address.query.filter_by(id=flat_id).limit(1).first()
+    period_form = SelectPeriodForm()
+    if request.method == 'POST' and period_form.validate_on_submit():
+        unloader = DataUploader(type=2,
+                                kvid=flat_id,
+                                period_start=dict(m=period_form.min_month.data, y=period_form.min_year.data),
+                                period_end=dict(m=period_form.max_month.data, y=period_form.max_year.data),
+                                user_id=current_user.id)
+        link = unloader.unload_and_save()
+        return send_file(link, as_attachment=True)
+    return render_template('jasny/inspector/pokaz_unloading_flat_2step.html',
+                           username=current_user.min_name(),
+                           page_name='Выгрузка показаний',
+                           flat=flat,
+                           form=period_form)

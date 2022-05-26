@@ -3,6 +3,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, EmailField, SubmitField, HiddenField, IntegerField, SelectField, \
     DateField, BooleanField, FloatField, FieldList, FormField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email
+from utils import month_name
 
 
 # Форма авторизации пользователя (/account/login)
@@ -125,3 +126,10 @@ class ApproveMeterForm(FlaskForm):
 
 class ChangeCostForm(FlaskForm):
     new_cost = FloatField(validators=[DataRequired()],name='cat_new_cost')
+
+
+class SelectPeriodForm(FlaskForm):
+    min_month = SelectField(name='unload_min_month', validators=[DataRequired()],choices = [(m, month_name(m)) for m in range(1, 13)])
+    max_month = SelectField(name='unload_max_month', validators=[DataRequired()],choices = [(m, month_name(m)) for m in range(1, 13)])
+    min_year = IntegerField(name='unload_min_year', validators=[DataRequired()])
+    max_year = IntegerField(name='unload_max_year', validators=[DataRequired()])

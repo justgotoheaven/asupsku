@@ -4,6 +4,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 from datetime import datetime
 from utils import month_name
+from os import remove
 
 
 class DataUploader():
@@ -17,6 +18,7 @@ class DataUploader():
                  period_end: dict = None,
                  user_id: int = None):
         self.__filename = 'unloads/Выгрузка_{}_{}.xlsx'.format(datetime.now().strftime("%d-%m-%Y-%H-%M-%S"), user_id)
+        self.__user = user_id
         self.mkd_id = mkdid
         self.kv_id = kvid
         self.person_id = personid
@@ -132,6 +134,11 @@ class DataUploader():
         self.__ws.cell(row=self.__row, column=column, value='Кем переданы').font = self.font_bold
         self.__row += 1
 
+    def __add_bottom(self):
+        self.__row += 3
+        user = db.session.query(User.name).filter_by(id=self.__user).limit(1).first()
+        self.__ws.cell(row=self.__row, column=1, value='Выгрузку запросил: инспектор {}'.format(user.name))
+
     def __prettify(self):
         for column_cells in self.__ws.columns:
             unmerged_cells = list(
@@ -143,6 +150,7 @@ class DataUploader():
         if self.type == 2:
             self.__getUnloadFlat()
         self.__prettify()
+        self.__add_bottom()
         self.__save_unload()
         return self.__filename
 

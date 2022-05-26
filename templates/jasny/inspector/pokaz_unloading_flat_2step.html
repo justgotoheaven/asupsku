@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    {% with username=username,active=3 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+    <div class="container">
+        <h3>Выгрузка показаний по квартире</h3>
+        <h4>Квартира: {{ flat.get_full_address() }}</h4>
+        <p>Выберите период для выгрузки:</p>
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <form class="form-horizontal" method="post">
+                    {{ form.csrf_token }}
+                    <p><strong>Начальный период:</strong></p>
+                    <div class="form-group">
+                        <div class="col-sm-2"><label class="control-label">Месяц:&nbsp;</label></div>
+                        <div class="col-sm-10">{{ form.min_month(class_='form-control') }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2"><label class="control-label">Год:&nbsp;</label></div>
+                        <div class="col-sm-10">{{ form.min_year(class_='form-control') }}</div>
+                    </div>
+                    <p><strong>Конечный период:</strong></p>
+                    <div class="form-group">
+                        <div class="col-sm-2"><label class="control-label">Месяц:&nbsp;</label></div>
+                        <div class="col-sm-10">{{ form.max_month(class_='form-control') }}</div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-2"><label class="control-label">Год:&nbsp;</label></div>
+                        <div class="col-sm-10">{{ form.max_year(class_='form-control') }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-success">Выгрузить показания</button>
+                </form>
+            </div>
+        </div>
+            
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+
+</body>
+
+</html>
