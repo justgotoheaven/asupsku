@@ -152,7 +152,7 @@ class DataUploader():
         self.__prettify()
         self.__add_bottom()
         self.__save_unload()
-        return os.path.abspath(self.__filename)
+        return self.__filename
 
     def __save_unload(self):
         return self.__wb.save(self.__filename)
