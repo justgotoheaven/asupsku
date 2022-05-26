@@ -1,7 +1,7 @@
 from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
-from models import User
+from models import User, Address
 from forms import FindUserForm, AddUserForm, ChangeUserEmailAndPassword
 import string
 from utils import generate_password
@@ -115,6 +115,7 @@ def inspector_users_showinfo(id):
         who_registered = db.session.query(User.name).filter(User.id == user.created_by).first().name
     except:
         who_registered = 'Неизвестно'
+    user_flats = Address.query.filter_by(owner=user.id).all()
     return render_template('jasny/inspector/show_user_information.html',
                            user = user,
                            who_registered = who_registered,
@@ -122,7 +123,8 @@ def inspector_users_showinfo(id):
                            form=change_form,
                            page_name='Информация о жильце',
                            username=current_user.min_name(),
-                           update = new_data)
+                           update = new_data,
+                           flats=user_flats)
 
 
 @app.route('/inspector/users/usercard',methods=['POST'])
