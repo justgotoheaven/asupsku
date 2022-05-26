@@ -4,7 +4,7 @@ from openpyxl import Workbook
 from openpyxl.styles import Font
 from datetime import datetime
 from utils import month_name
-from os import remove
+import os
 
 
 class DataUploader():
@@ -152,7 +152,7 @@ class DataUploader():
         self.__prettify()
         self.__add_bottom()
         self.__save_unload()
-        return self.__filename
+        return os.path.abspath(self.__filename)
 
     def __save_unload(self):
         return self.__wb.save(self.__filename)
