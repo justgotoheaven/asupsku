@@ -2,11 +2,9 @@ from app import db
 from models import User, Pokaz, Counter, House, Address
 from openpyxl import Workbook
 from openpyxl.styles import Font, Side, Border
-from openpyxl.styles.builtins import good
 from openpyxl.writer.excel import save_virtual_workbook
 from datetime import datetime
 from utils import month_name
-import os
 
 
 class DataUploader():
