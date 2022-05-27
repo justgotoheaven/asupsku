@@ -52,6 +52,9 @@ class DataUploader():
         cell_date_end = 'D5'
         cell_filter_param = 'A6'
         cell_filter_end = 'H6'
+        cell_period_param = 'A7'
+        cell_period = 'B7'
+        cell_period_end = 'D7'
 
         self.__ws[cell_sysname].font = self.font_bold
         self.__ws[cell_title].font = self.font_bold
@@ -61,6 +64,8 @@ class DataUploader():
         self.__ws[cell_date_in].font = self.font_regular
         self.__ws[cell_filter_param].font = self.font_bold
         self.__ws[self.__cell_filter].font = self.font_regular
+        self.__ws[cell_period_param].font = self.font_bold
+        self.__ws[cell_period].font = self.font_regular
 
         self.__ws[cell_sysname] = 'АСУПСКУ'
         self.__ws[cell_title] = 'Выгрузка показаний приборов учета'
@@ -71,11 +76,17 @@ class DataUploader():
         self.__ws[cell_date] = 'Дата'
         self.__ws[cell_date_in] = datetime.now().strftime('%d.%m.%Y (%H:%M:%S)')
         self.__ws[cell_filter_param] = 'Фильтр:'
+        self.__ws[cell_period_param] = 'Период'
+        self.__ws[cell_period] = '{} {} - {} {}'.format(month_name(int(self.period_start_m)),
+                                                        self.period_start_y,
+                                                        month_name(int(self.period_end_m)),
+                                                        self.period_end_y)
+        self.__ws.merge_cells('{}:{}'.format(cell_period, cell_period_end))
         self.__ws.merge_cells('{}:{}'.format(cell_date_in, cell_date_end))
         self.__ws.merge_cells('{}:{}'.format(self.__cell_filter, cell_filter_end))
         self.__ws.merge_cells('{}:{}'.format(cell_title,cell_title_end))
 
-        self.__row = 9
+        self.__row = 10
         self.__col = 1
 
     def __getOtborName(self):
