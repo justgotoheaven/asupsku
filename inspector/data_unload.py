@@ -2,6 +2,7 @@ from app import db
 from models import User, Pokaz, Counter, House, Address
 from openpyxl import Workbook
 from openpyxl.styles import Font
+from openpyxl.writer.excel import save_virtual_workbook
 from datetime import datetime
 from utils import month_name
 import os
@@ -17,7 +18,7 @@ class DataUploader():
                  period_start: dict = None,
                  period_end: dict = None,
                  user_id: int = None):
-        self.__filename = 'unloads/Выгрузка_{}_{}.xlsx'.format(datetime.now().strftime("%d-%m-%Y-%H-%M-%S"), user_id)
+        self.__filename = 'Выгрузка_{}_{}.xlsx'.format(datetime.now().strftime("%d-%m-%Y-%H-%M-%S"), user_id)
         self.__user = user_id
         self.mkd_id = mkdid
         self.kv_id = kvid
@@ -146,13 +147,15 @@ class DataUploader():
             length = max(len(str(cell.value)) for cell in unmerged_cells)
             self.__ws.column_dimensions[unmerged_cells[0].column_letter].width = length * 1.5
 
-    def unload_and_save(self):
+    def unload_and_push(self):
         if self.type == 2:
             self.__getUnloadFlat()
         self.__prettify()
         self.__add_bottom()
-        self.__save_unload()
+        return save_virtual_workbook(self.__wb)
+
+    def get_filename(self):
         return self.__filename
 
-    def __save_unload(self):
-        return self.__wb.save(self.__filename)
+    def __download_virtual(self):
+        return save_virtual_workbook(self.__wb)

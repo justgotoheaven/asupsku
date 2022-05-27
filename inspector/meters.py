@@ -4,6 +4,7 @@ from flask_login import current_user, login_required
 from models import Categories, House, Address, Counter, User
 from forms import AddMeterForm, ApproveMeterForm, ShowFlatsFilterHouseForm, SelectPeriodForm
 from inspector.data_unload import DataUploader
+from urllib.parse import quote
 
 @app.route('/inspector/meters/add',methods=['GET', 'POST'])
 @login_required
@@ -167,8 +168,16 @@ def inspector_meters_unload_pkz_kv():
                                 period_start=dict(m=period_form.min_month.data, y=period_form.min_year.data),
                                 period_end=dict(m=period_form.max_month.data, y=period_form.max_year.data),
                                 user_id=current_user.id)
-        link = unloader.unload_and_save()
-        return send_file(link, as_attachment=True)
+        link_virtual = unloader.unload_and_push()
+        filename = unloader.get_filename()
+        return Response(
+            link_virtual,
+            headers={
+                'charset': 'utf-8',
+                'Content-Disposition': 'attachment; filename=''{utf_filename}'.format(
+                    utf_filename=quote(filename.encode('utf-8'))),
+                'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            })
     return render_template('jasny/inspector/pokaz_unloading_flat_2step.html',
                            username=current_user.min_name(),
                            page_name='Выгрузка показаний',
