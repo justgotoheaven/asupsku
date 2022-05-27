@@ -1,8 +1,10 @@
 from app import app, db
 from flask import Response, render_template, request, flash
 from flask_login import current_user, login_required
-from models import House, Address, Counter, User, Categories
-from forms import AddFlatForm, ShowFlatsFilterHouseForm, FindUserForm
+from models import House, Address, Counter, User, Categories, Pokaz
+from forms import AddFlatForm, ShowFlatsFilterHouseForm, FindUserForm, SetPokazForm
+from application.pokaz_utils import clear_exists_pkz
+from utils import get_period, cur_year
 
 @app.route('/inspector/flats/add',methods=['POST','GET'])
 @login_required
@@ -155,3 +157,62 @@ def inspector_flats_bind_owner():
                            flat_address = flat_address,
                            page_name='Пользователи',
                            username=current_user.min_name())
+
+
+@app.route('/inspector/flats/add_pokaz/<int:flat>',methods=['POST','GET'])
+@login_required
+def inspector_flats_add_pkz(flat):
+    if not current_user.is_inspector():
+        return Response(status=403)
+    flat = Address.query.filter_by(id=flat).limit(1).first()
+    meters = Counter.query.filter_by(flat=flat.id,approved=True).all()
+    meters_form_data = list()
+    no_meters = None
+    if meters:
+        for m in meters:
+            m_info = dict(counter_name=m.name, counter=m.id)
+            pokaz = db.session.query(Pokaz.amount).filter_by(counter=m.id).order_by(Pokaz.id.desc()).limit(1).first()
+            m_info['pokaz_current'] = 0.0 if pokaz is None else pokaz.amount
+            all_pkz_to_avg = db.session.query(Pokaz.amount).filter_by(counter=m.id).\
+                order_by(Pokaz.id.desc()).limit(2).all()
+            if len(all_pkz_to_avg) < 2:
+                m_info['average'] = None
+            else:
+                avg_list = [p.amount for p in all_pkz_to_avg]
+                average = avg_list[0] - avg_list[1]
+                m_info['average'] = float("%.2f" % average)
+            meters_form_data.append(m_info)
+    else:
+        no_meters = True
+    form = SetPokazForm(counters=meters_form_data)
+    if request.method == 'POST' and form.is_submitted():
+        data = form.counters.data
+        for pkz in data:
+            if pkz['pokaz'] is None:
+                continue
+            current_pkz = db.session.query(Pokaz.amount).filter_by(counter=pkz['counter']).\
+                order_by(Pokaz.id.desc()).limit(1).first()
+            if current_pkz is not None and pkz['pokaz'] < current_pkz.amount:
+                flash('Введенные показания для счетчика {} некорректны!'.format(pkz['counter_name']),
+                      'alert alert-danger')
+            else:
+                clear_exists_pkz(pkz['counter'], get_period(), cur_year())
+                pkz_to_save = Pokaz(counter=pkz['counter'],
+                                    amount=pkz['pokaz'],
+                                    added_by=current_user.id,
+                                    p_month=get_period(),
+                                    p_year=cur_year())
+                try:
+                    db.session.add(pkz_to_save)
+                    db.session.commit()
+                    flash('Показания счетчика {} успешно переданы!'.format(pkz['counter_name']), 'alert alert-success')
+                except Exception as e:
+                    db.session.rollback()
+                    flash('Ошибка при передачи показаний счетчика {}. Техническая информация: {}'.
+                          format(pkz['counter_name'], e), 'alert alert-danger')
+    return render_template('jasny/inspector/insp_add_pkz_flat.html',
+                           username=current_user.min_name(),
+                           page_name='Передача показаний',
+                           flat=flat,
+                           form=form,
+                           no_meters=no_meters)

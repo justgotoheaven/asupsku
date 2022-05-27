@@ -110,7 +110,7 @@ class DataUploader():
         adres = db.session.query(House.adres).filter_by(id=mkd).limit(1).first().adres
         self.__ws[self.__cell_filter] = self.__getFilterName() + ' ' + adres
         self.__prepareUnloadDataTable()
-        flats = Address.query.filter_by(house=mkd).all()
+        flats = Address.query.filter_by(house=mkd).order_by(Address.kv.asc()).all()
         for f in flats:
             if self.__check_exists_pkz(f.id) is False:
                 continue

@@ -94,6 +94,7 @@ class SetPokazCountersForm(FlaskForm):
     pokaz = FloatField()
     pokaz_current = HiddenField()
     cost = HiddenField()
+    average = HiddenField()
 
 
 class SetPokazForm(FlaskForm):

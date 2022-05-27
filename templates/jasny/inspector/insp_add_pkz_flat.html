@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    {% with username=username,active=2 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+    <div class="container">
+        <h3>Передача показаний</h3>
+        <hr>
+        <h4><strong>Квартира: </strong>{{ flat.get_full_address() }}</h4>
+        <h4><strong>Собственник: </strong>{{ flat.get_owner_name() }}</h4>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="alert alert-info">
+                    Доступные приборы учета (неповеренные не отображаются):
+                    <p><em>В полях ввода показаний указаны текущие показания приборов учета</em></p>
+                </div>
+                {% if no_meters %}
+                <div class="alert alert-danger">
+                    В данной квартире не зарегистрировано ни одного прибора учета.
+                </div>
+                {%else%}
+                <form class="form-horizontal" method="post">
+                    {% for form_entry in form.counters %}
+                    <div class="form-group" style="margin-bottom:0px; margin-top:15px;">
+                        {{ form_entry.hidden_tag() }}
+                        <label class="col-xs-3 control-label" style="text-align: left">{{ form_entry.counter_name.data }}</label>
+                        <div class="col-xs-9">
+                            {% with pkz_cur = form_entry.pokaz_current.data %}
+                            {{ form_entry.pokaz(class_='form-control', placeholder=pkz_cur) }}
+                            {%endwith%}
+                        </div>    
+                    </div>
+                    {% if form_entry.average.data %}
+                    <Span style="font-size:14px;"><em>Среднемесячное потребление: <strong>{{ form_entry.average.data }}</strong></em></span>
+                    <a href="#" onclick="setPokazWithAverage('{{ form_entry.pokaz_current.id }}', 
+                    '{{ form_entry.average.id }}', '{{ form_entry.pokaz.id }}')">(Установить по среднемесячному расходу)</a>
+                    {% endif %}
+                    {%endfor%}
+                    <button class="btn btn-success" style="margin-top: 15px;" type="submit">Передать показания</button>
+                </form>
+                {%endif%}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="{{ category }}" style="margin-top: 20px;"><span><strong>{{ message
+                            }}</strong><br></span></div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+    </div>
+    <script>
+        function setPokazWithAverage(current, avg, input) {
+            var current_element = document.getElementById(current)
+            var avg_elem = document.getElementById(avg)
+            var input_elem = document.getElementById(input)
+            result = parseFloat(avg_elem.value) + parseFloat(current_element.value)
+            input_elem.value = result.toFixed(2)
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>
