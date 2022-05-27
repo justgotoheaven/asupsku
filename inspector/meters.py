@@ -148,6 +148,14 @@ def inspector_meters_unload_pkz():
                                form=filter_form,
                                show_list=show_list,
                                flats=flats)
+    elif type == 1:
+        filter_form = ShowFlatsFilterHouseForm()
+        all_houses = db.session.query(House.id, House.adres).all()
+        filter_form.house.choices = [(h.id, h.adres) for h in all_houses]
+        return render_template('jasny/inspector/pokaz_unloading_mkd.html',
+                               username=current_user.min_name(),
+                               page_name='Выгрузка показаний',
+                               form=filter_form)
     else:
         return Response(status=400)
 
@@ -182,4 +190,37 @@ def inspector_meters_unload_pkz_kv():
                            username=current_user.min_name(),
                            page_name='Выгрузка показаний',
                            flat=flat,
+                           form=period_form)
+
+
+@app.route('/inspector/meters/unload_mkd', methods=['GET','POST'])
+@login_required
+def inspector_meters_unload_pkz_mkd():
+    if not current_user.is_inspector():
+        return Response(status=403)
+    if request.args.get('house') is None:
+        return Response(status=400)
+    house_id = int(request.args.get('house'))
+    house_adr = db.session.query(House.adres).filter_by(id=house_id).limit(1).first()
+    period_form = SelectPeriodForm()
+    if request.method == 'POST' and period_form.validate_on_submit():
+        unloader = DataUploader(type=1,
+                                mkdid=house_id,
+                                period_start=dict(m=period_form.min_month.data, y=period_form.min_year.data),
+                                period_end=dict(m=period_form.max_month.data, y=period_form.max_year.data),
+                                user_id=current_user.id)
+        link_virtual = unloader.unload_and_push()
+        filename = unloader.get_filename()
+        return Response(
+            link_virtual,
+            headers={
+                'charset': 'utf-8',
+                'Content-Disposition': 'attachment; filename=''{utf_filename}'.format(
+                    utf_filename=quote(filename.encode('utf-8'))),
+                'Content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            })
+    return render_template('jasny/inspector/pokaz_unloading_mkd_2step.html',
+                           username=current_user.min_name(),
+                           page_name='Выгрузка показаний',
+                           adr=house_adr.adres,
                            form=period_form)

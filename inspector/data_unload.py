@@ -1,7 +1,8 @@
 from app import db
 from models import User, Pokaz, Counter, House, Address
 from openpyxl import Workbook
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Side, Border
+from openpyxl.styles.builtins import good
 from openpyxl.writer.excel import save_virtual_workbook
 from datetime import datetime
 from utils import month_name
@@ -33,6 +34,8 @@ class DataUploader():
         self.period_end_y = period_end['y']
         self.__row = 0
         self.__col = 0
+        self.__start_info_row = None
+        self.__end_info_row = None
 
         self.font_bold = Font(name='Arial', size=12, bold=True)
         self.font_regular = Font(name='Arial', size=12)
@@ -93,12 +96,49 @@ class DataUploader():
         elif self.type == 3:
             return 'Пользователь'
 
-    def __getUnloadFlat(self):
-        flat = self.kv_id
+    def __get_unload_mkd(self):
+        mkd = self.mkd_id
+        adres = db.session.query(House.adres).filter_by(id=mkd).limit(1).first().adres
+        self.__ws[self.__cell_filter] = self.__getFilterName() + ' ' + adres
+        self.__prepareUnloadDataTable()
+        flats = Address.query.filter_by(house=mkd).all()
+        for f in flats:
+            if self.__check_exists_pkz(f.id) is False:
+                continue
+            self.__ws.cell(row=self.__row, column=1, value=f.get_full_address()).font = self.font_bold
+            self.__ws.merge_cells(start_row=self.__row,
+                                  start_column=1,
+                                  end_row=self.__row,
+                                  end_column=5)
+            self.__ws.cell(row=self.__row, column=1).style = 'Good'
+
+            self.__row += 1
+            self.__getUnloadFlat(f.id)
+
+    def __check_exists_pkz(self,flat):
+        counters = db.session.query(Counter.id).filter_by(flat=flat).all()
+        exists = False
+        for c in counters:
+            pokaz_data = Pokaz.query.filter(Pokaz.counter == c.id,
+                                            Pokaz.p_month >= self.period_start_m,
+                                            Pokaz.p_year >= self.period_start_y,
+                                            Pokaz.p_month <= self.period_end_m,
+                                            Pokaz.p_year <= self.period_end_y).limit(1).first()
+            if not pokaz_data:
+                continue
+            else:
+                exists = True
+                break
+        return exists
+
+
+    def __getUnloadFlat(self, flat_id=None):
+        flat = self.kv_id if flat_id is None else flat_id
         flat_info = Address.query.filter_by(id=flat).limit(1).first()
         flat_adr = flat_info.get_full_address()
-        self.__ws[self.__cell_filter] = self.__getFilterName() + ' ' + flat_adr
-        self.__prepareUnloadDataTable()
+        if flat_id is None:
+            self.__ws[self.__cell_filter] = self.__getFilterName() + ' ' + flat_adr
+            self.__prepareUnloadDataTable()
         flat_counters = db.session.query(Counter.name, Counter.id).filter_by(flat = flat_info.id).all()
         for c in flat_counters:
             pokaz_data = Pokaz.query.filter(Pokaz.counter == c.id,
@@ -124,6 +164,7 @@ class DataUploader():
     def __prepareUnloadDataTable(self):
         # верхняя строка таблицы
         column = self.__col
+        self.__start_info_row = self.__row
         self.__ws.cell(row=self.__row, column=column, value='Прибор учета').font = self.font_bold
         column += 1
         self.__ws.cell(row=self.__row, column=column, value='Период').font = self.font_bold
@@ -133,6 +174,8 @@ class DataUploader():
         self.__ws.cell(row=self.__row, column=column, value='Дата передачи').font = self.font_bold
         column += 1
         self.__ws.cell(row=self.__row, column=column, value='Кем переданы').font = self.font_bold
+        for i in range(1, 6):
+            self.__ws.cell(row=self.__row, column=i).style = 'Output'
         self.__row += 1
 
     def __add_bottom(self):
@@ -145,11 +188,18 @@ class DataUploader():
             unmerged_cells = list(
                 filter(lambda cell_to_check: cell_to_check.coordinate not in self.__ws.merged_cells, column_cells))
             length = max(len(str(cell.value)) for cell in unmerged_cells)
-            self.__ws.column_dimensions[unmerged_cells[0].column_letter].width = length * 1.5
+            self.__ws.column_dimensions[unmerged_cells[0].column_letter].width = length * 1.4
+        thin = Side(border_style="thin", color="000000")
+        for row in self.__ws.iter_rows(min_row=self.__start_info_row, max_col=5, max_row=self.__end_info_row-1):
+            for cell in row:
+                cell.border = Border(top=thin, left=thin, right=thin, bottom=thin)
 
     def unload_and_push(self):
         if self.type == 2:
             self.__getUnloadFlat()
+        elif self.type == 1:
+            self.__get_unload_mkd()
+        self.__end_info_row = self.__row
         self.__prettify()
         self.__add_bottom()
         return save_virtual_workbook(self.__wb)
