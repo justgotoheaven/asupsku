@@ -134,3 +134,13 @@ class SelectPeriodForm(FlaskForm):
     max_month = SelectField(name='unload_max_month', validators=[DataRequired()],choices = [(m, month_name(m)) for m in range(1, 13)])
     min_year = IntegerField(name='unload_min_year', validators=[DataRequired()])
     max_year = IntegerField(name='unload_max_year', validators=[DataRequired()])
+
+
+class ChangeUserPasswordForm(FlaskForm):
+    new_password = PasswordField(name="new_password", validators=[DataRequired(), Length(min=8)],
+                                 render_kw={'placeholder': 'Введите новый пароль...'})
+
+
+class ChangeUserEmailForm(FlaskForm):
+    new_email = EmailField(name="new_email",validators=[DataRequired()],
+                           render_kw={'placeholder': 'Введите новый адрес e-mail...'})

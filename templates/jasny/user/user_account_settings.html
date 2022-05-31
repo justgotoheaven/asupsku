@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+</head>
+
+<body>
+    {% with username=username %}
+    {% if role == 1 %}
+    {% include "jasny/admin/nav.html" %}
+    {% elif role == 2 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% else %}
+    {% include "jasny/user/nav.html" %}
+    {% endif %}
+    {% endwith %}
+
+    <div class="container">
+        <h1>Управление аккаунтом</h1>
+        <hr>
+        <div>
+            <h3>Аккаунт <strong>{{ account.login }}</strong>
+                {% if role == 1 %}
+                <span class="label label-danger">Администратор</span>
+                {% elif role == 2 %}
+                <span class="label label-primary">Инспектор</span>
+                {% else %}
+                <span class="label label-default">Пользователь</span>
+                {% endif %}
+            </h3>
+        </div>
+        <div class="row" style="margin-top: 20px">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        Информация об аккаунте
+                    </div>
+                    <div class="panel-body">
+                        <p><strong>ID в системе: </strong>{{ account.id }}</p>
+                        <p><strong>ФИО: </strong>{{ account.name }}</p>
+                        <p><strong>Адрес E-mail: </strong>{{ account.email }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Действия с аккаунтом
+                    </div>
+                    <div class="panel-body">
+                        <div class="alert alert-info" style="padding: 10px">Изменить пароль:</div>
+                        <form method="post">
+                            {{ new_pass_form.csrf_token }}
+                            <div class="form-group">
+                                <label>Новый пароль:</label>
+                                {{ new_pass_form.new_password(class_='form-control') }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Сменить пароль</button>
+                        </form>
+                        <hr>
+                        <div class="alert alert-info" style="padding: 10px">Изменить адрес электронной почты:</div>
+                        <form method="post">
+                            {{ new_email_form.csrf_token }}
+                            <div class="form-group">
+                                <label>Новый пароль:</label>
+                                {{ new_email_form.new_email(class_='form-control') }}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Сменить e-mail</button>
+                        </form>
+                        <hr>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div class="{{ category }}" style="margin-top: 10px;"><span><strong>{{ message
+                            }}</strong><br></span></div>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+
+</body>
+
+</html>

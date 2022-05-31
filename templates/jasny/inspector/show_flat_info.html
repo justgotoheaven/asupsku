@@ -29,7 +29,7 @@
                 <p><strong>ID в системе: </strong>{{ flat.id }}</p>
                 <p><strong>Адрес: </strong>{{ flat_address }}</p>
                 <div style="margin-bottom: 10px;">
-                    <span><strong>Владелец: </strong>{{ flat_owner }}</span>
+                    <span><strong>Владелец: </strong><a href='/inspector/users/show/{{ flat.owner }}'>{{ flat_owner }}</a></span>
                     <a href="/inspector/flats/flat_bind?flat_id={{ flat.id }}" class="btn-sm btn-info">Назначить владельца
                         квартиры</a>
                 </div>
