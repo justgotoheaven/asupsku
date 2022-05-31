@@ -56,8 +56,9 @@
                         <td>{{ owners[f.id] }}</td>
                         <td><a class="btn btn-primary btn-sm" role="button" style="margin-right: 5px;" 
                             href="/inspector/flats/show/{{ f.id }}">Просмотр</a>
-                            <a class="btn btn-success btn-sm" role="button" style="margin-right: 5px;" href="/inspector/meters/add?flat_id={{ f.id }}">Добавить прибор
+                            <a class="btn btn-info btn-sm" role="button" style="margin-right: 5px;" href="/inspector/meters/add?flat_id={{ f.id }}">Добавить прибор
                                 учета</a>
+                            <a href="/inspector/flats/add_pokaz/{{ f.id }}" class="btn btn-success btn-sm">Передать показания</a>
                         </td>
                     </tr>
                     {% endfor %}
