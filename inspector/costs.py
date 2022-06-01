@@ -38,7 +38,7 @@ def inspector_costs_change(cid):
     change_form = ChangeCostForm()
     if request.method == 'POST' and change_form.validate_on_submit():
         if change_form.new_cost.data < 1:
-            flash('Введена некорректная сумма!','alert alert-danger')
+            flash('Введена некорректная сумма!', 'alert alert-danger')
         else:
             upd_cat_data = dict(cost = change_form.new_cost.data,
                                 cost_changed_by = current_user.id,
