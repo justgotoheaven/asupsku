@@ -14,7 +14,7 @@ def appeals_main_page():
         return redirect(url_for('inspector_index'))
 
     user_appeals = db.session.query(Appeal.id,Appeal.created_on,Appeal.subject,
-                                    Appeal.answered).filter_by(created_by=current_user.id).order_by(Appeal.id.desc()).all()
+                                    Appeal.answered).filter_by(created_by=current_user.id).order_by(Appeal.created_on.desc()).all()
     return render_template('jasny/user/appeals_index.html',
                            appeals=user_appeals,
                            page_name='Обращения',
