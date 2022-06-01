@@ -43,11 +43,11 @@
                         <label class="col-xs-3 control-label">{{ form_entry.counter_name.data }}</label>
                         <div class="col-xs-9">
                             {% with pkz_cur = form_entry.pokaz_current.data %}
-                            {{ form_entry.pokaz(class_='form-control', placeholder=pkz_cur) }} 
+                            {{ form_entry.pokaz(class_='form-control', placeholder=pkz_cur) }}
                             {%endwith%}
                         </div>
-                        <div id="{{ form_entry.pokaz.id }}-cost"></div>
                     </div>
+                    <div id="{{ form_entry.pokaz.id }}-cost" class="alert alert-info" style="padding: 5px"></div>
                     {%endfor%}
                     <button class="btn btn-success" type="submit">Передать показания</button>
                 </form>
@@ -70,14 +70,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
     <script>
         {% for form_entry in form.counters %}
-        $("#{{ form_entry.pokaz.id }}").on('input', function() {
+        document.getElementById('{{ form_entry.pokaz.id }}-cost').hidden = true;
+        $("#{{ form_entry.pokaz.id }}").on('input', function () {
             var input_elem = $("#{{ form_entry.pokaz.id }}");
             var current_pkz = input_elem.attr('placeholder');
-            var razn = input_elem.val() - current_pkz;
-            var cost = razn * $("#{{ form_entry.cost.id }}").val();
-            $("#{{ form_entry.pokaz.id }}-cost").html('Стоимость услуги: '+cost.toFixed(2)+'<br>Тариф: '+$("#{{ form_entry.cost.id }}").val());
+            $(this).val($(this).val().replace(',','.')) 
+            if (parseFloat(current_pkz) <= parseFloat(input_elem.val()) && input_elem.val() != '') {
+                document.getElementById('{{ form_entry.pokaz.id }}-cost').hidden = false;
+                var razn = input_elem.val() - current_pkz;
+                var cost = razn * $("#{{ form_entry.cost.id }}").val();
+                $("#{{ form_entry.pokaz.id }}-cost").html('Стоимость услуги: ' + cost.toFixed(2) + ' руб.<br>Тариф: ' + $("#{{ form_entry.cost.id }}").val() + ' руб.');
+            }
+            else {
+                document.getElementById('{{ form_entry.pokaz.id }}-cost').hidden = true;
+            }
         });
-        {%endfor%}
+        {% endfor %}
     </script>
 
 </body>
