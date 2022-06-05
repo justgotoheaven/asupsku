@@ -97,6 +97,9 @@ class Counter(db.Model):
     serial_num = db.Column(db.String(100))
     flat = db.Column(db.Integer(), nullable=False)
     approve_document = db.Column(db.String(256))
+    archived = db.Column(db.Boolean(), default=False)
+    archived_by = db.Column(db.Integer())
+    archived_on = db.Column(db.DateTime())
 
     def __repr__(self):
         return "<{}:{}>".format(self.id, self.name)

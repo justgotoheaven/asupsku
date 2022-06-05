@@ -21,24 +21,48 @@
     {% endwith %}
     <div class="container">
         <h2>Квартира <strong>{{ flat_address }}</strong></h2>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">Информация о квартире</h3>
-            </div>
-            <div class="panel-body">
-                <p><strong>ID в системе: </strong>{{ flat.id }}</p>
-                <p><strong>Адрес: </strong>{{ flat_address }}</p>
-                <div style="margin-bottom: 10px;">
-                    <span><strong>Владелец: </strong><a href='/inspector/users/show/{{ flat.owner }}'>{{ flat_owner }}</a></span>
-                    <a href="/inspector/flats/flat_bind?flat_id={{ flat.id }}" class="btn-sm btn-info">Назначить владельца
-                        квартиры</a>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Информация о квартире</h3>
+                    </div>
+                    <div class="panel-body">
+                        <p><strong>ID в системе: </strong>{{ flat.id }}</p>
+                        <p><strong>Адрес: </strong>{{ flat_address }}</p>
+                        <div style="margin-bottom: 10px;">
+                            <span><strong>Владелец: </strong><a href='/inspector/users/show/{{ flat.owner }}'>{{
+                                    flat_owner }}</a></span>
+                            <a href="/inspector/flats/flat_bind?flat_id={{ flat.id }}" class="btn-sm btn-info">Назначить
+                                владельца
+                                квартиры</a>
+                        </div>
+                        <p><strong>Количество прописанных: </strong>{{ flat.registered_in }}</p>
+                        <p><strong>Кем зарегистрирована: </strong>{{ flat.added_by }}</p>
+                        <p><strong>Когда зарегистрирована: </strong>{{ flat.added_on }}</p>
+                        <p><strong>Последнее изменение: </strong>{{ flat.changed_on }} ({{ flat.changed_by }})</p>
+                    </div>
                 </div>
-                <p><strong>Количество прописанных: </strong>{{ flat.registered_in }}</p>
-                <p><strong>Кем зарегистрирована: </strong>{{ flat.added_by }}</p>
-                <p><strong>Когда зарегистрирована: </strong>{{ flat.added_on }}</p>
-                <p><strong>Последнее изменение: </strong>{{ flat.changed_on }} ({{ flat.changed_by }})</p>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        Управление квартирой
+                    </div>
+                    <div class="panel-body">
+                        <p><a class="btn btn-info" role="button" style="margin-right: 5px;"
+                                href="/inspector/meters/add?flat_id={{ flat.id }}">Добавить прибор
+                                учета</a></p>
+                        <p>
+                            <a href="/inspector/flats/add_pokaz/{{ flat.id }}" class="btn btn-success">Передать
+                                показания</a>
+
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
+
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">Зарегистрированные приборы учета</h3>
@@ -58,10 +82,14 @@
                             {% for m in meters %}
                             <tr>
                                 <td>{{ m.id }}</td>
-                                <td>{{ m.name }}</td>
+                                <td>{{ m.name }}
+                                    {% if not m.approved %}
+                                    <span class="label label-danger">Не поверен</span>
+                                    {% endif %}
+                                </td>
                                 <td>
-                                    <a class="btn btn-primary btn-sm" role="button"
-                                        style="margin-right: 5px;">Информация</a>
+                                    <a href="/inspector/meters/info/{{ m.id }}" class="btn btn-primary btn-sm" role="button"
+                                        style="margin-right: 5px;">Управление</a>
                                 </td>
                             </tr>
                             {% endfor %}

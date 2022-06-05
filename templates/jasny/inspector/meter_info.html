@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ page_name }} - СУП</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap-theme.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+    <link href="/static/css/navmenu.css" rel="stylesheet">
+</head>
+
+<body>
+    {% with username=username,active=3 %}
+    {% include "jasny/inspector/nav.html" %}
+    {% endwith %}
+
+    <div class="container">
+        <h2>Прибор учета {{ meter.name }} <small>{{ address }}</small></h2>
+        <hr>
+        <div class="alert alert-success">
+            <p style="font-size:18px;">Текущие показания: <strong>{{ amount }}</strong></p>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Общая информация</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="bg-info">
+                            <tr>
+                                <th>Характеристика</th>
+                                <th>Значение</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>ID в системе</td>
+                                <td>{{ meter.id }}</td>
+                            </tr>
+                            <tr>
+                                <td>Наименование</td>
+                                <td>{{ meter.name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Заводской номер</td>
+                                <td>{{ meter.serial_num }}</td>
+                            </tr>
+                            <tr>
+                                <td>Дата установки</td>
+                                <td>{{ meter.setup_date }}</td>
+                            </tr>
+                            <tr>
+                                <td>Место установки</td>
+                                <td>{{ meter.setup_on }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <h3>Данные о поверке прибора учета</h3>
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead class="bg-info">
+                            <tr>
+                                <th>Характеристика</th>
+                                <th>Значение</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td>Счетчик поверен</td>
+                                {% if meter.approved %}
+                                <td class="success">Да</td>
+                            </tr>
+                            <tr>
+                                <td>Дата поверки</td>
+                                <td>{{ meter.approve_date }}</td>
+                            </tr>
+                            <tr>
+                                <td>Дата следующей поверки</td>
+                                <td>{{ meter.next_approve_date }}</td>
+                            </tr>
+                            {%else%}
+                            <td class="danger">Нет</td>
+                            </tr>
+                            {%endif%}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        Управление прибором учета
+                    </div>
+                    <div class="panel-body">
+                        {% if not meter.approved%}
+                        <p><a href="/inspector/meters/approve/{{ meter.id }}" class="btn btn-success">Поверить счетчик</a></p>
+                        {%else%}
+                        <p><a href="/inspector/meters/approve/{{ meter.id}}?unapprove=1" class="btn btn-danger">Отменить поверку</a></p>
+                        {%endif%}
+                        <p><a href="#" class="btn btn-warning">Архивировать счетчик</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+    <script src="/static/js/app.js"></script>
+
+</body>
+
+</html>

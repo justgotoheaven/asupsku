@@ -37,8 +37,8 @@ def account_login():
             else:
                 return redirect(url_for('app_main'))
         else:
-            flash('Ошибка: неверный логин или пароль')
-    return render_template('login_form.html', page_name='Авторизация',
+            flash('Вы ввели неправильный логин или пароль. Попробуйте еще раз.')
+    return render_template('login_new.html', page_name='Авторизация',
                            form=form)
 
 @app.route('/account/logout', methods=['POST', 'GET'])

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ page_name }} - СУП</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Bitter:400,700">
+    <link rel="stylesheet" href="/static/css/login_form.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="shortcut icon" href="/static/icon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <!-- Main Content -->
+    <div class="container-fluid">
+        <div class="row main-content bg-success text-center">
+            <div class="col-md-4 text-center company__info">
+                <span class="company__logo"><img src="/static/electric-meter.png" alt="" style="width: 50%;"></span>
+                <h4 class="company_title">Система учета показаний счетчиков</h4>
+            </div>
+            <div class="col-md-8 col-xs-12 col-sm-12 login_form ">
+                <div class="container-fluid">
+                    <div class="row">
+                        <h2>Вход в систему</h2>
+                    </div>
+                    <div class="row">
+                        <form method="post" class="form-group">
+                            {{ form.csrf_token }}
+                            <div class="row">
+                                {{ form.login(class_='form__input') }}
+                            </div>
+                            <div class="row">
+                                {{ form.password(class_='form__input') }}
+                            </div>
+                            <div class="row">
+                                <input type="submit" value="Войти" class="btn">
+                            </div>
+                        </form>
+                        {% with messages = get_flashed_messages() %}
+				            {% if messages %}
+					            {% for message in messages %}
+                        <div class="error-alert">
+                            {{ message }}
+                        </div>
+                                {% endfor %}
+				            {% endif %}
+			            {% endwith %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

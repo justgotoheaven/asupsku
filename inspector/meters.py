@@ -1,7 +1,7 @@
 from app import app, db
 from flask import Response, render_template, request, flash, send_file
 from flask_login import current_user, login_required
-from models import Categories, House, Address, Counter, User
+from models import Categories, House, Address, Counter, User, Pokaz
 from forms import AddMeterForm, ApproveMeterForm, ShowFlatsFilterHouseForm, SelectPeriodForm
 from inspector.data_unload import DataUploader
 from urllib.parse import quote
@@ -93,6 +93,24 @@ def inspector_meters_not_approved():
 def inspector_meters_approve(id):
     if not current_user.is_inspector():
         return Response(status=403)
+    if request.method == 'GET' and request.args.get('unapprove') == '1':
+        meter_info = db.session.query(Counter.id,
+                                      Counter.name,
+                                      Counter.flat,
+                                      Counter.approved).filter_by(id=id).limit(1).first()
+        adres = Address.query.filter_by(id=meter_info.flat).limit(1).first()
+        if meter_info.approved:
+            upd = dict(approved=False)
+            try:
+                Counter.query.filter_by(id=id).update(upd)
+                db.session.commit()
+            except:
+                db.session.rollback()
+        return render_template('jasny/inspector/unapprove_meter.html',
+                               username=current_user.min_name(),
+                               page_name='Отмена поверки',
+                               meter=meter_info,
+                               adres=adres.get_full_address())
     approve_form = ApproveMeterForm()
     c_info = db.session.query(Counter.name,
                               Counter.setup_on,
@@ -224,3 +242,20 @@ def inspector_meters_unload_pkz_mkd():
                            page_name='Выгрузка показаний',
                            adr=house_adr.adres,
                            form=period_form)
+
+
+@app.route('/inspector/meters/info/<int:meter>', methods=['GET','POST'])
+@login_required
+def inspector_meters_manage(meter):
+    if not current_user.is_inspector():
+        return Response(status=403)
+    meter = Counter.query.filter_by(id=meter).limit(1).first()
+    address = Address.query.filter_by(id = meter.flat).limit(1).first().get_full_address()
+    pkz_info = db.session.query(Pokaz.amount).filter_by(counter = meter.id).order_by(Pokaz.id.desc()).limit(1).first()
+    amount = pkz_info.amount if pkz_info else 'Нет данных'
+    return render_template('jasny/inspector/meter_info.html',
+                           address=address,
+                           amount=amount,
+                           meter=meter,
+                           page_name='Информация о счетчике',
+                           username=current_user.min_name())

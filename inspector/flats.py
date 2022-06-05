@@ -90,7 +90,7 @@ def inspector_flats_show_by_id(id):
     if not flat_info:
         return Response(status=404)
     flat_house = db.session.query(House.adres).filter_by(id=flat_info.house).limit(1).first()
-    flat_meters = db.session.query(Counter.name, Counter.id).filter_by(flat=id).all()
+    flat_meters = db.session.query(Counter.name, Counter.id, Counter.approved).filter_by(flat=id).all()
     flat_create_user = db.session.query(User.name).filter_by(id=flat_info.added_by).limit(1).first()
     if flat_info.owner is not None:
         flat_owner = db.session.query(User.name).filter_by(id=flat_info.owner).limit(1).first().name
