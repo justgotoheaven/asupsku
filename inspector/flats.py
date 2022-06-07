@@ -96,7 +96,7 @@ def inspector_flats_show_by_id(id):
         flat_owner = db.session.query(User.name).filter_by(id=flat_info.owner).limit(1).first().name
     else:
         flat_owner = 'Нет владельца'
-    flat_info.added_by = flat_create_user.name
+    flat_info.added_by = flat_create_user.name if flat_create_user else 'Неизвестно'
     return render_template('jasny/inspector/show_flat_info.html',
                            username=current_user.min_name(),
                            page_name='Просмотр информации о квартире',
