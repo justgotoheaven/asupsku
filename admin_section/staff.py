@@ -151,43 +151,37 @@ def admin_add_inspector():
         check_words = sum([i.strip(string.punctuation).isalpha() for i in add_form.insp_name.data.split()])
         if check_words < 3:
             flash('ФИО инспектора должно содержать минимум 3 слова')
-            return render_template('jasny/admin/add_inspector.html',
-                                   page_name='Новый инспектор',
-                                   username=current_user.min_name(),
-                                   form=add_form)
-        username_string = '{}_{}'.format(add_form.insp_name.data.split(' ')[0], randint(100,999))
-        insp_username = translit(username_string,
-                                 language_code='ru',
-                                 reversed=True)
-        new_user = User(name = add_form.insp_name.data,
-                        login = insp_username,
-                        email = add_form.insp_email.data,
-                        inspector = True,
-                        created_by=current_user.id)
-        user_password = generate_password(8)
-        new_user.set_password(user_password)
-        try:
-            db.session.add(new_user)
-            db.session.commit()
-
-
-            flash('Инспектор {0} создан успешно\n\nЛогин: {1}\nПароль: {2}'.format(add_form.insp_name.data,
-                                                                                insp_username,
-                                                                                user_password))
+        else:
+            username_string = '{}_{}'.format(add_form.insp_name.data.split(' ')[0], randint(100,999))
+            insp_username = translit(username_string,
+                                     language_code='ru',
+                                     reversed=True)
+            new_user = User(name=add_form.insp_name.data,
+                            login=insp_username,
+                            email=add_form.insp_email.data,
+                            inspector=True,
+                            created_by=current_user.id)
+            user_password = generate_password(8)
+            new_user.set_password(user_password)
             try:
-                send_welcome(add_form.insp_name.data, insp_username, user_password, add_form.insp_email.data, insp=True)
-                flash('Информация об учетных данных и порядке входа направлена на email {}'.format(add_form.insp_email.data))
-            except:
-                flash('Ошибка отправки учетных данных по эл.почте.')
-            return render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
-                                   username=current_user.min_name(),
-                                   form=add_form)
-        except Exception as e:
-            db.session.rollback()
-            flash('Ошибка создания пользователя<br>Техническая информация:<br>{}'.format(e))
-            render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
-                            username=current_user.min_name(),
-                            form=add_form)
+                db.session.add(new_user)
+                db.session.commit()
+                flash('Инспектор {0} создан успешно\n\nЛогин: {1}\nПароль: {2}'.format(add_form.insp_name.data,
+                                                                                    insp_username,
+                                                                                    user_password))
+                try:
+                    send_welcome(add_form.insp_name.data,
+                                 insp_username,
+                                 user_password,
+                                 add_form.insp_email.data,
+                                 insp=True)
+                    flash('Информация об учетных данных и порядке входа направлена на email {}'.
+                          format(add_form.insp_email.data))
+                except:
+                    flash('Ошибка отправки учетных данных по эл.почте.')
+            except Exception as e:
+                db.session.rollback()
+                flash('Ошибка создания пользователя<br>Техническая информация:<br>{}'.format(e))
     return render_template('jasny/admin/add_inspector.html', page_name='Новый инспектор',
                            username=current_user.min_name(),
                            form=add_form)
