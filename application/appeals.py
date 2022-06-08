@@ -1,5 +1,5 @@
 from app import app, db # Точка входа в приложение Flask
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, Response
 from flask_login import login_required, current_user
 from models import Appeal, User
 from forms import AppealsCreate
@@ -57,6 +57,8 @@ def appeals_info_page(id):
         return redirect(url_for('inspector_index'))
 
     appeal = Appeal.query.filter_by(id=id).limit(1).first()
+    if appeal.created_by is not current_user.id:
+        return Response(status=403)
     author = db.session.query(User.name).filter_by(id=appeal.created_by).limit(1).first().name
     appeal_answered_by_name = None
     if appeal.answered:

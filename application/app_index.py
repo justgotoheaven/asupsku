@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import app, db # Точка входа в приложение Flask
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, Response
 from flask_login import login_required, current_user
 from models import Address, House, Counter, Pokaz, Categories
 from forms import SetPokazForm
@@ -62,6 +62,9 @@ def app_user_meters(id):
         return redirect(url_for('inspector_index'))
 
     meter = Counter.query.filter_by(id=id).limit(1).first()
+    meter_flat = db.session.query(Address.owner).filter_by(id=meter.flat).limit(1).first()
+    if meter_flat.owner is not current_user.id:
+        return Response(status=403)
     meter_pokaz = db.session.query(Pokaz.amount).filter_by(counter=meter.id).order_by(Pokaz.id.desc()).limit(1).first()
     meter_pokaz_data = 'нет данных'
     if meter_pokaz:
@@ -84,7 +87,9 @@ def app_user_meters_addpokaz(kvid):
     if current_user.is_inspector():
         return redirect(url_for('inspector_index'))
 
-    house = db.session.query(Address.house, Address.kv).filter_by(id=kvid).limit(1).first()
+    house = db.session.query(Address.house, Address.kv, Address.owner).filter_by(id=kvid).limit(1).first()
+    if house.owner is not current_user.id:
+        return Response(status=403)
     house_adr = db.session.query(House.adres).filter_by(id=house.house).limit(1).first()
     meters = db.session.query(Counter.id, Counter.name, Counter.approved, Counter.category).filter_by(flat=kvid).all()
     no_meters = False

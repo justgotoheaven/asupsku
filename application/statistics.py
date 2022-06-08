@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import app, db # Точка входа в приложение Flask
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, Response
 from flask_login import login_required, current_user
 from models import Address, House, Counter, Pokaz
 from forms import SelectFlatForStats, SelectMeterForStats
@@ -36,7 +36,10 @@ def stats_main_page():
 
     if request.method == 'GET' and request.args.get('meter_id'):
         meter_id=request.args.get('meter_id')
-        counter_name = db.session.query(Counter.name).filter_by(id=meter_id).limit(1).first().name
+        counter_name = db.session.query(Counter.name, Counter.flat).filter_by(id=meter_id).limit(1).first().name
+        flat_info = db.session.query(Address.owner).filter_by(id=counter_name.flat).limit(1).first()
+        if flat_info.owner is not current_user.id:
+            return Response(status=403)
         counter_pokaz_data = db.session.query(Pokaz.amount,
                                               Pokaz.p_year,
                                               Pokaz.p_month).filter_by(counter=meter_id).all()
