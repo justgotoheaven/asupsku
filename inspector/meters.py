@@ -25,7 +25,8 @@ def inspector_meters_add():
         add_form.category.choices = [(c.id, c.name) for c in categories]
         if request.method == 'POST' and add_form.is_submitted():
             approved_state = False
-            if len(add_form.approve_date.raw_data[0]) > 0:
+            approved_date = add_form.approve_date.raw_data[0] if len(add_form.approve_date.raw_data[0]) > 0 else None
+            if approved_date is not None:
                 approved_state = True
             new_meter = Counter(name=add_form.name.data,
                                 category=add_form.category.data,
