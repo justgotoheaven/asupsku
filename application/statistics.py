@@ -36,7 +36,7 @@ def stats_main_page():
 
     if request.method == 'GET' and request.args.get('meter_id'):
         meter_id=request.args.get('meter_id')
-        counter_name = db.session.query(Counter.name, Counter.flat).filter_by(id=meter_id).limit(1).first().name
+        counter_name = db.session.query(Counter.name, Counter.flat).filter_by(id=meter_id).limit(1).first()
         flat_info = db.session.query(Address.owner).filter_by(id=counter_name.flat).limit(1).first()
         if flat_info.owner is not current_user.id:
             return Response(status=403)
@@ -64,7 +64,7 @@ def stats_main_page():
             return render_template('/jasny/user/statistics.html',
                                    form=search_form,
                                    show_chart=True,
-                                   meter_name=counter_name,
+                                   meter_name=counter_name.name,
                                    periods=pokaz_periods_names,
                                    pokaz=pokaz_full_data,
                                    avg_periods=average_periods,
@@ -74,7 +74,7 @@ def stats_main_page():
         return render_template('/jasny/user/statistics.html',
                                form=search_form,
                                show_chart=True,
-                               meter_name = counter_name,
+                               meter_name = counter_name.name,
                                periods=pokaz_periods_names,
                                pokaz=pokaz_full_data,
                                page_name='Статистика',
