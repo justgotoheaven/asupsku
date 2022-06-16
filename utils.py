@@ -19,19 +19,10 @@ def generate_password(len: int):
 def get_period():
     current_date = datetime.datetime.now()
     month = int(current_date.strftime('%m'))
-    day = int(current_date.strftime('%d'))
-    prev_month = month - 1
-    if prev_month == 0:
-        prev_month = 12
-    if day > 25-1:
-        return month
-    else:
-        return prev_month
+    return month
 
 
 def cur_year():
     d = datetime.datetime.now()
     year = int(d.strftime('%Y'))
-    if int(d.strftime('%d')) < 25 and int(d.strftime('%m')) == 1:
-        return year-1
     return year
