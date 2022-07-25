@@ -8,7 +8,7 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 app.config['MAIL_USERNAME'] = 'asupsku@jhvn.tk'
 app.config['MAIL_DEFAULT_SENDER'] = 'asupsku@jhvn.tk'
-app.config['MAIL_PASSWORD'] = 'cbiljlwrlqrgddqb'
+app.config['MAIL_PASSWORD'] = '---'
 
 mail = Mail(app)
 
