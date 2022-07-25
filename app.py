@@ -2,7 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 database_config = dict(host='db4free.net',
                        user='asupsku_admin',
-                       password='t513t513t513',
+                       password='---',
                        database='asupsku_db_main')
 
 app = Flask(__name__)
